@@ -15,7 +15,6 @@ function App() {
           height: "100vh",
         }}
       >
-        <OrbitControls />
         <Suspense fallback={<Loader />}>
           <Scene />
         </Suspense>
