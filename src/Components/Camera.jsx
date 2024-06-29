@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+// Camera.jsx
+
+import React, { useRef, useEffect, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, Box3 } from "three";
 import { OrbitControls, useGLTF } from "@react-three/drei";
@@ -9,66 +11,73 @@ const Camera = ({ BoundingObject }) => {
   const controlsRef = useRef();
   const BoundingRef = useRef();
   const { scene: BoundingScene } = useGLTF(BoundingObject);
+  const [isPanning, setIsPanning] = useState(false);
+  const lastPosition = useRef(new Vector3());
 
   useEffect(() => {
-    if (controlsRef.current) {
-      camera.position.set(0, 4, 1);
-      camera.lookAt(0, 0, 0);
-      setCameraRef(camera);
-    }
     if (BoundingScene) {
       BoundingRef.current = BoundingScene.clone();
       scene.add(BoundingRef.current);
     }
+
+    const handleKeyDown = (e) => {
+      if (e.shiftKey) setIsPanning(true);
+    };
+    const handleKeyUp = (e) => {
+      if (!e.shiftKey) setIsPanning(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
   }, [camera, BoundingScene, scene]);
 
-  useFrame(() => {
-    if (BoundingRef.current && controlsRef.current) {
-      const BoundingBounds = new Box3().setFromObject(BoundingRef.current);
-
-      // Add some padding to keep camera slightly inside the bounds
-      const padding = 0.5;
-      const minBounds = BoundingBounds.min
-        .clone()
-        .add(new Vector3(padding, padding, padding));
-      const maxBounds = BoundingBounds.max
-        .clone()
-        .sub(new Vector3(padding, padding, padding));
-
-      // Clamp camera position
-      camera.position.x = Math.max(
-        minBounds.x,
-        Math.min(maxBounds.x, camera.position.x)
-      );
-      camera.position.y = Math.max(
-        minBounds.y,
-        Math.min(maxBounds.y, camera.position.y)
-      );
-      camera.position.z = Math.max(
-        minBounds.z,
-        Math.min(maxBounds.z, camera.position.z)
-      );
-
-      // Update OrbitControls target to the center of the Bounding
-      const BoundingCenter = new Vector3();
-      BoundingBounds.getCenter(BoundingCenter);
-      controlsRef.current.target.copy(BoundingCenter);
+  useEffect(() => {
+    if (controlsRef.current) {
+      // camera.position.set(
+      //   -3, // rotation
+      //   1, // distance from top
+      //   4 // zoom
+      // ); // Set initial position
+      setCameraRef(camera);
+      camera.position.x = 0.3;
+      camera.position.y = 2.27;
+      camera.position.z = 6.8;
+    //  lastPosition.current.copy(camera.position);
     }
+  }, []);
+
+  useFrame(() => {
+    // Only log if the camera has actually moved
+    if (!camera.position.equals(lastPosition.current)) {
+      //lastPosition.current.copy(camera.position);
+    }
+    // }
   });
 
   return (
-    <OrbitControls
-    ref={controlsRef}
-    minPolarAngle={Math.PI / 2.5}
-    maxPolarAngle={Math.PI / 1.2}
-    enablePan={true}
-    panSpeed={0.5}
-    enableZoom={true}
-    zoomSpeed={1.5}
-    minDistance={1}
-    maxDistance={7}
-      
+    <>
+     <OrbitControls
+      ref={controlsRef}
+      minPolarAngle={Math.PI / 6}
+      maxPolarAngle={Math.PI / 2.3}
+      enablePan={false}
+      enableRotate={!isPanning}
+      panSpeed={0.5}
+      enableZoom={true}
+      zoomSpeed={1.5}
+      minDistance={1}
+      maxDistance={7}
     />
+
+    </>
+
+
+   
   );
 };
 
