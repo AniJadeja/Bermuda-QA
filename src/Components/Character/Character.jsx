@@ -10,12 +10,10 @@ const Character = ({animation,...props}) => {
   const { actions } = useAnimations(animations, group);
   const isMobile = useMobileScreen();
   
-  useEffect(() => {
-    actions[animation].fadeOut(0.5).reset().fadeIn(0.5).play();
-    scene.rotation.y = Math.PI;
-   
-    console.log("isMobileScreen : ", isMobile)
-  }, [isMobile]);
+   useEffect(() => {
+    actions[animation]?.reset().fadeIn(0.24).play();
+    return () => actions?.[animation]?.fadeOut(0.24);
+  }, [animation]);
 
   return (
 
