@@ -4,21 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 
-
 import useCounterStore from "../GlobalData/GlobalData";
 import { useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 export const CharacterController = () => {
-
-  const [animation,setAnimation]=useState('idle')
-
-
-
+  const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
-
   const { Orbitcontroll, increment, decrement } = useCounterStore();
-
-
   const {
     rb,
     container,
@@ -27,101 +19,85 @@ export const CharacterController = () => {
     cameraWorldPosition,
     cameraTarget,
     character,
-    cameraLookAtWorldPosition
+    cameraLookAtWorldPosition,
   } = useRefs();
+  const VELOCITY = 1;
 
-  useFrame(({ camera }) => {
-    //console.log("Orbitcontroll",Orbitcontroll)
+  useFrame(
+    ({ camera }) => {
+      if (rb.current) {
+        setAnimation("idle");
 
-    if (rb.current) {
-      setAnimation("idle")
+        const vel = rb.current.linvel();
 
-      const vel = rb.current.linvel();
+        const movement = {
+          x: 0,
+          z: 0,
+        };
 
-      console.log("vel----------", vel)
+        if (get().forward) {
+          movement.z = -1;
+          setAnimation("Walking");
+        }
+        if (get().backward) {
+          movement.z = 1;
+          setAnimation("Walking");
+        }
 
-      const movement = {
+        if (get().left) {
+          movement.x = -1;
+          setAnimation("Walking");
+        }
+        if (get().right) {
+          movement.x = 1;
+          setAnimation("Walking");
+        }
 
-        x: 0,
-        z: 0
+        if (movement.x !== 0 || movement.z !== 0) {
+          vel.z = VELOCITY * movement.z;
+          vel.x = VELOCITY * movement.x;
+        }
+
+        rb.current.setLinvel(vel, true);
       }
 
-      if (get().forward) {
-        
-        movement.z = -1;
-        setAnimation("Walking")
-      }
-      if (get().backward) {
-        
-        movement.z = 1;
-        setAnimation("Walking")
-      }
-
-
-
-      if (get().left) {
-        movement.x = -1;
-        setAnimation("Walking")
-      }
-      if (get().right) {
-        movement.x = 1;
-        setAnimation("Walking")
-      }
-
-      if (movement.x !== 0 || movement.z !== 0) {
-        vel.z = 5 * movement.z
-        vel.x = 5 * movement.x
-      }
-
-      rb.current.setLinvel(vel, true)
-
-
-
-
-
-    }
-
-
-
-    if (!Orbitcontroll) {
-      cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-      camera.position.lerp(cameraWorldPosition.current, 0.1);
-      if (cameraTarget.current) {
+      if (!Orbitcontroll) {
         cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-        cameraLookAt.current.lerp(cameraWorldPosition.current, 0.1);
-        camera.lookAt(cameraLookAt.current)
-
+        camera.position.lerp(cameraWorldPosition.current, 0.1);
+        if (cameraTarget.current) {
+          cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
+          cameraLookAt.current.lerp(cameraWorldPosition.current, 0.1);
+          camera.lookAt(cameraLookAt.current);
+        }
       }
-    }
+    },
+    [Orbitcontroll]
+  );
+ 
 
-
-  }, [Orbitcontroll])
-  useEffect(() => {
-    console.log("Orbitcontroll", Orbitcontroll)
-
-
-
-  }, [Orbitcontroll])
-
-
-
-
-  return (<>
-
-    <RigidBody colliders={false} lockRotations ref={rb}>
-      <ambientLight />
-      <group ref={container}>
-        {!Orbitcontroll && <><group ref={cameraTarget} position-z={1.5} />
-          <group ref={cameraPosition} position-y={6} position-z={5} rotation-y={Math.PI} /></>}
-        <group ref={character} >
-          <Character position={[0, 3, 0]} animation={animation} />
+  return (
+    <>
+      <RigidBody colliders={false} lockRotations ref={rb}>
+        <ambientLight />
+        <group ref={container}>
+          {!Orbitcontroll && (
+            <>
+              <group ref={cameraTarget} position-z={1.5} />
+              <group
+                ref={cameraPosition}
+                position-y={6}
+                position-z={5}
+                rotation-y={Math.PI}
+              />
+            </>
+          )}
+          <group ref={character}>
+            <Character position={[0, 3, 0]} animation={animation} />
+          </group>
         </group>
-      </group>
 
-      <CapsuleCollider args={[.7, .3]} position={[0, 4, 0]} />
-    </RigidBody>
-
-
-
-  </>)
-}
+        <CapsuleCollider args={[0.7, 0.3]} position={[0, 4, 0]} />
+      </RigidBody>
+    </>
+  );
+};

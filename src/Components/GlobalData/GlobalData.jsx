@@ -1,4 +1,4 @@
-import create from 'zustand';
+import create from "zustand";
 
 const useCounterStore = create((set) => ({
   Orbitcontroll: false,
@@ -8,11 +8,4 @@ const useCounterStore = create((set) => ({
 
 export default useCounterStore;
 
-
-
-
-const cameraLookAt=create((set)=>{
-
-
-
-})
+const cameraLookAt = create((set) => {});

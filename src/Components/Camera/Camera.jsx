@@ -1,14 +1,14 @@
 // Camera.jsx
 
 import React, { useRef, useEffect } from "react";
-import { useThree} from "@react-three/fiber";
-import { OrbitControls} from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import { setCameraRef } from "./CameraControls";
 import { RigidBody } from "@react-three/rapier";
 import useCounterStore from "../GlobalData/GlobalData";
 const Camera = () => {
   const { Orbitcontroll, increment, decrement } = useCounterStore();
-  
+
   const { camera } = useThree();
   const controlsRef = useRef();
 
@@ -26,25 +26,24 @@ const Camera = () => {
       //  lastPosition.current.copy(camera.position);
     }
   }, []);
-
-  console.log("Orbitcontroll",Orbitcontroll)
-
   return (
     <>
       <ambientLight intensity={0.4} />
       <RigidBody type="fixed" colliders="cuboid">
-   {   Orbitcontroll&& <OrbitControls
-        ref={controlsRef}
-        minPolarAngle={Math.PI / 6}
-        maxPolarAngle={Math.PI / 2.3}
-        enablePan={false}
-        enableRotate={true}
-        panSpeed={0.5}
-        enableZoom={true}
-        zoomSpeed={1.5}
-        minDistance={1}
-        maxDistance={7}
-      /> }
+        {Orbitcontroll && (
+          <OrbitControls
+            ref={controlsRef}
+            minPolarAngle={Math.PI / 6}
+            maxPolarAngle={Math.PI / 2.3}
+            enablePan={false}
+            enableRotate={true}
+            panSpeed={0.5}
+            enableZoom={true}
+            zoomSpeed={1.5}
+            minDistance={1}
+            maxDistance={7}
+          />
+        )}
       </RigidBody>
     </>
   );
