@@ -16,17 +16,18 @@ const Question = () => {
   }, []);
 
   const positions = {
-    userName: [3.4, 2.1, -10.85],
+    userName: [1.8, 4.2, -10.85],
+    //userName: [0, 1, 0],
     questionText: [3.4, 1.9, -10.85],
     answer: [3.4, 1.7, -10.85],
     answerUserName: [3.4, 1.5, -10.85],
   };
 
   const fontSizes= {
-    userName: 0.1,
-    questionText: 0.1,
-    answer: 0.1,
-    answerUserName: 0.1,
+    userName: 0.2,
+    questionText: 0.3,
+    answer: 0.2,
+    answerUserName: 0.5,
   }
 
   return (
