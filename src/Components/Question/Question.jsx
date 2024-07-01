@@ -1,43 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Html, MarchingPlane } from "@react-three/drei";
 import QuestionWrapper from "./QuestionWrapper";
+import { getQuestionFromURL } from "../../utils/browserUtils";
+import { getQuestion } from "../../Features/GetQuestion/questionController";
+import { getAnswer } from "../../Features/GetAnswer/answerController";
 
 const Question = () => {
+  useEffect(() => {
+    (async () => {
+      const question = getQuestionFromURL();
+      const questionData = await getQuestion(question);
+      const answerData = await getAnswer(questionData.id);
+      //   console.log("Answer : ", answerData);
+    })();
+  }, []);
+
+  const positions = {
+    userName: [3.4, 2.1, -10.85],
+    questionText: [3.4, 1.9, -10.85],
+    answer: [3.4, 1.7, -10.85],
+    answerUserName: [3.4, 1.5, -10.85],
+  };
+
+  const fontSizes= {
+    userName: 0.1,
+    questionText: 0.1,
+    answer: 0.1,
+    answerUserName: 0.1,
+  }
+
   return (
-    <Html
-      position={[3.4, 2.1, -10.85]}
-      occlude="blending"
-      transform
-      style={{
-        height:'130px',
-        width:'246px',
-        fontSize: "12px",
-        backgroundColor: "black",
-        padding: "0px",
-        border: "5px 5px #fff",
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
-        fontOpticalSizing: "auto",
-        fontWeight: "600",
-        fontStyle: "normal",
-        letterSpacing : '0.5px',
-        userSelect:'none',
-      }}
-    >
-      <QuestionWrapper>
-        <QuestionWrapper.UserName position={[1, 4, 3]}>
-          UserName
-        </QuestionWrapper.UserName>
-        <QuestionWrapper.QuestionText>
-          QuestionText
-        </QuestionWrapper.QuestionText>
-        <QuestionWrapper.Answer>Answer</QuestionWrapper.Answer>
-        <QuestionWrapper.AnswerUserName>
-          AnswerUserName
-        </QuestionWrapper.AnswerUserName>
-      </QuestionWrapper>
-    </Html>
+    <QuestionWrapper positions={positions} fontSizes={fontSizes}>
+      <QuestionWrapper.UserName>UserName</QuestionWrapper.UserName>
+      <QuestionWrapper.QuestionText>QuestionText</QuestionWrapper.QuestionText>
+      <QuestionWrapper.Answer>Answer</QuestionWrapper.Answer>
+      <QuestionWrapper.AnswerUserName>
+        AnswerUserName
+      </QuestionWrapper.AnswerUserName>
+    </QuestionWrapper>
   );
 };
 

@@ -10,11 +10,7 @@ function App() {
         width: "100vw",
       }}
     >
-      <Canvas
-        style={{
-          height: "100vh",
-        }}
-      >
+      <Canvas style={{ height: "100vh" }}>
         <Suspense fallback={<Loader />}>
           <Scene />
         </Suspense>
