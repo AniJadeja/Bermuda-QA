@@ -1,5 +1,6 @@
 import { Text } from "@react-three/drei";
 import React from "react";
+import TextBox from "./TextBox";
 
 const QuestionWrapper = ({ children, positions, fontSizes }) => {
   return (
@@ -11,9 +12,11 @@ const QuestionWrapper = ({ children, positions, fontSizes }) => {
   );
 };
 
-const UserName = ({ children, positions, fontSizes }) => {
-  return <Text position={positions.userName} fontSize={fontSizes.userName} className="user-name">{children}</Text>;
-};
+const UserName = ({ children, positions, fontSizes }) => (
+    <TextBox position={positions.userName} fontSize={fontSizes.userName}>
+      {children} Asks,
+    </TextBox>
+  );
 
 const QuestionText = ({ children, positions, fontSizes }) => {
   return <Text position={positions.questionText} fontSize={fontSizes.questionText} className="question-text">{children}</Text>;
