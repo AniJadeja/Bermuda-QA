@@ -1,8 +1,13 @@
 import { Text } from "@react-three/drei";
-import React from "react";
+import React, { useEffect } from "react";
 import TextBox from "./TextBox";
 
 const QuestionWrapper = ({ children, positions, fontSizes }) => {
+
+    useEffect(()=>{
+        console.log("Question Rendered..")
+    })
+
   return (
     <>
       {React.Children.map(children, child => 
