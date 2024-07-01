@@ -7,7 +7,7 @@ export const getQuestionFromURL = () => {
     return question.replace(/-/g, ' ');
   };
   
-  const updateURLWithQuestion = (question) => {
+  export const updateURLWithQuestion = (question) => {
     // Replace spaces with hyphens and encode the question
     const encodedQuestion = encodeURIComponent(question.replace(/ /g, '-'));
     const newUrl = `/${encodedQuestion}`;
