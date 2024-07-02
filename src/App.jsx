@@ -2,14 +2,16 @@ import { Canvas } from "@react-three/fiber";
 import Scene from "./Components/Scene";
 import { Suspense } from "react";
 import { Html, OrbitControls } from "@react-three/drei";
+import PopupButton from "./Components/Popup/PopupButton";
+
 function App() {
   return (
     <div
       style={{
         height: "100vh",
         width: "100vw",
-      }}
-    >
+      }} >  
+        <PopupButton />
       <Canvas style={{ height: "100vh" }}>
         <Suspense fallback={<Loader />}>
           <Scene />
