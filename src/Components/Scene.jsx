@@ -11,7 +11,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 const Scene = () => {
   return (
     <>
-      <Physics debug>
+      <Physics>
       <Environment
           files="/assets/street.hdr" // Replace with your actual HDRI file path
           background // Whether to set the environment map as the scene background
