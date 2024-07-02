@@ -1,0 +1,311 @@
+/* .popup {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    overflow: hidden;
+    padding: 22px;
+    margin: auto;
+  }
+  .close-button {
+    position: relative;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    background: none;
+    border: none;
+    min-height: 40px;
+    min-width: 40px;
+    cursor: pointer;
+    object-fit: cover;
+    background-image: url("../../Assets/closeButton.svg");
+    background-repeat: no-repeat;
+    background-size: cover; 
+  }
+  
+
+  .navButtons{
+    display: flex;
+
+  }
+
+  .header {
+    margin: -22px;
+    margin-bottom: 22px;
+    padding-top: 22px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+
+  }
+
+  textarea{
+    width: 99%;
+    height: 200px;
+    resize: none;
+    margin-bottom: 20px;
+    padding-top: 10px;
+  }
+  
+  .option {
+    flex: 1;
+    padding: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 1;
+  }
+  
+  .option.active {
+    color: #4CAF50;
+  }
+  
+  .slider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 50%;
+    background-color: #4CAF50;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .slider.post {
+    transform: translateX(100%);
+  }
+  
+  .content {
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #DFBEA5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+  
+  textarea {
+    flex: 1;
+    height: 100px;
+    border: none;
+    resize: none;
+    outline: none;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+
+  }
+  
+  .word-count {
+    color: #888;
+  }
+  
+  .post-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  } */
+
+
+  /* Popup.css */
+
+.popup {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  height: 50%;
+  overflow: hidden;
+  padding: 22px;
+  margin: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  max-height: 370px;
+
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+.popup.visible {
+  opacity: 1;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 99;
+}
+
+.popup-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* Media Queries for Responsive Design */
+@media (max-width: 1200px) {
+  .popup {
+    width: 70%;
+    height: 70%;
+  }
+}
+
+
+
+.close-button {
+  position: relative;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  min-height: 40px;
+  min-width: 40px;
+  cursor: pointer;
+  object-fit: cover;
+  background-image: url("/assets/Popup/closeButton.svg");
+  background-repeat: no-repeat;
+  background-size: cover; 
+}
+
+.navButtons {
+  display: flex;
+}
+
+.header {
+  margin: -22px;
+  margin-bottom: 22px;
+  padding-top: 22px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+textarea {
+  width: 99%;
+  height: 200px;
+  resize: none;
+  margin-bottom: 20px;
+  padding-top: 10px;
+}
+
+.option {
+  flex: 1;
+  padding: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: black;
+  z-index: 1;
+}
+
+.option.active {
+  color: #4CAF50;
+}
+
+.slider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 50%;
+  background-color: #4CAF50;
+  transition: transform 0.3s ease-in-out;
+}
+
+.slider.post {
+  transform: translateX(100%);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #1b1b1b;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #DFBEA5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+textarea {
+  flex: 1;
+  height: 100px;
+  border: none;
+  resize: none;
+  outline: none;
+  background-color: white;
+  color: #1b1b1b;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.word-count {
+  color: #888;
+}
+
+.post-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Button CSS */
+.open-popup-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  padding: 10px 20px;
+  background-color: rgba(241, 76, 76, 0.589);
+  color: white;
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+  box-shadow: 0 10px 7px 2px rgba(0, 0, 0, 0.3);
+}
+
+
