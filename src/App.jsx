@@ -1,7 +1,8 @@
 import Scene from "./Components/Scene";
 import Nipple from "react-nipple";
 import { movementCharacter } from "./Components/Character/CharacterControls.jsx";
- import { useCameraControlStore } from "./Components/GlobalData/GlobalData"; 
+import { useCameraControlStore } from "./Components/GlobalData/GlobalData"; 
+import PopupButton from "./Components/Popup/PopupButton";
 const JoyStrikStart = (data) => {
   console.log("data", data);
 
@@ -25,7 +26,6 @@ const JoyStrikEnd = (d) => {
   movementCharacter.z=0
   movementCharacter.x=0
 };
-
 function App() {
 
   const { cameraControlMode, setCameraControlMode } = useCameraControlStore(); 
@@ -35,8 +35,8 @@ function App() {
  
   return (
 <div>
+  <PopupButton />
   <Scene/>
-
   <Nipple
        options={{ mode: "static", position: { bottom: "50px", left: "50px" } }}
        style={{

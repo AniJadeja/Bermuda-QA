@@ -49,7 +49,8 @@ const Scene = () => {
       <Physics debug>
         <Hall/>
         <Camera />
-       <CharacterController/>
+         <CharacterController/>
+        <Question />
       </Physics>
       </Suspense>
       </Canvas>

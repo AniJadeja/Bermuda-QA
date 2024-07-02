@@ -13,10 +13,8 @@ export let movementCharacter={
   y:0
 }
 export const CharacterController = () => {
-
   const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
-
   const {
     rb,
     container,
@@ -126,7 +124,6 @@ export const CharacterController = () => {
           x: 0,
           z: 0,
         };
-
         if(movementCharacter.x>0||movementCharacter.x<0){
           console.log("movementCharacter x", movementCharacter.x)
 
@@ -218,7 +215,6 @@ export const CharacterController = () => {
       <RigidBody colliders={false} lockRotations ref={rb}>
         <ambientLight />
         <group ref={container}>
-        
           <group ref={cameraTarget} position-z={-8} />
           <group ref={cameraPosition} position-y={count} position-z={count/2} />
           <group ref={character}>

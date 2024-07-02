@@ -1,12 +1,10 @@
-import create from 'zustand';
+import create from "zustand";
 
 export const useCounterStore = create((set) => ({
   Orbitcontroll: false,
   increment: () => set((state) => ({ Orbitcontroll: true })),
   decrement: () => set((state) => ({ Orbitcontroll: false })),
 }));
-
-
 
 export const useCameraControlStore = create((set) => ({
   cameraControlMode: "character",

@@ -1,14 +1,12 @@
 // Camera.jsx
 
 import React, { useRef, useEffect } from "react";
-import { useThree} from "@react-three/fiber";
-import { OrbitControls} from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import { setCameraRef } from "./CameraControls";
 import { RigidBody } from "@react-three/rapier";
 
 const Camera = () => {
-
-  
   const { camera } = useThree();
   const controlsRef = useRef();
 
@@ -26,9 +24,6 @@ const Camera = () => {
       //  lastPosition.current.copy(camera.position);
     }
   }, []);
-
-
-
   return (
     <>
      
@@ -44,7 +39,6 @@ const Camera = () => {
         minDistance={1}
         maxDistance={7}
       /> } 
-   
     </>
   );
 };
