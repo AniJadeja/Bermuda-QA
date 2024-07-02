@@ -7,7 +7,9 @@ export const useRefs = () => {
   const cameraTarget = useRef(null);
   const cameraPosition = useRef(null);
   const character = useRef(null);
- 
+  const characterRotationTarget = useRef(0);
+  const rotationTarget = useRef(0);
+ const  Orbitcontroll=useRef(null)
   const cameraWorldPosition = useRef(new Vector3());
   const cameraLookAtWorldPosition = useRef(new Vector3());
   const cameraLookAt = useRef(new Vector3());
@@ -21,5 +23,10 @@ export const useRefs = () => {
     cameraWorldPosition,
     cameraLookAtWorldPosition,
     cameraLookAt,
+    rotationTarget,
+    characterRotationTarget,
+    Orbitcontroll
+    
+    
   };
 };
