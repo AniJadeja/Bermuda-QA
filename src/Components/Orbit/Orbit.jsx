@@ -24,6 +24,8 @@ const Orbit = (props) => {
         zoomSpeed={1.5}
         minDistance={1}
         maxDistance={7}
+        autoRotate={true}
+        rotateSpeed={.001}
       /> } 
    
     </>

@@ -4,29 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { Vector3, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
-import useCounterStore from "../GlobalData/GlobalData";
+
 import { OrbitControls, Text, Text3D, useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
+import {useCameraControlStore }from "../GlobalData/GlobalData";
 export let movementCharacter={
   x:0,
   y:0
 }
 export const CharacterController = () => {
-  const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
-    "Character Control",
-    {
-      WALK_SPEED: { value: 0.8, min: 0.1, max: 4, step: 0.1 },
-      RUN_SPEED: { value: 1.6, min: 0.2, max: 12, step: 0.1 },
-      ROTATION_SPEED: {
-        value: degToRad(0.5),
-        min: degToRad(0.1),
-        max: degToRad(5),
-        step: degToRad(0.1),
-      },
-    }
-  );
 
   const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
@@ -46,7 +34,7 @@ export const CharacterController = () => {
     increment,
     decrement,
   } = useRefs();
-
+  const { cameraControlMode, setCameraControlMode } = useCameraControlStore();
   const normalizeAngle = (angle) => {
     while (angle > Math.PI) angle -= 2 * Math.PI;
     while (angle < -Math.PI) angle += 2 * Math.PI;
@@ -126,33 +114,10 @@ export const CharacterController = () => {
   }, []);
 
 
-  const clickCount = useRef(0);
-  useEffect(() => {
-   
-    const onClick = () => {
-      console.log("Clicked time",clickCount.current)
-      clickCount.current++;
-      setTimeout(() => {
-        if (clickCount.current === 3) {
-          console.log("Clicked time taggle",)
-          toggleCameraControlMode();
-        }
-        clickCount.current = 0;
-      }, 1000); // 1000ms = 1 second
-    };
 
-    document.addEventListener("click", onClick);
-    // touch
-    document.addEventListener("touchstart", onClick);
-
-    return () => {
-      document.removeEventListener("click", onClick);
-      document.removeEventListener("touchstart", onClick);
-    };
-  }, []);
 
   // State to determine camera control mode
-  const [cameraControlMode, setCameraControlMode] = useState("character");
+ /*  const [cameraControlMode, setCameraControlMode] = useState("character"); */
 
   useFrame(({ camera, mouse }) => {
     if (cameraControlMode === "character") {
@@ -204,18 +169,14 @@ export const CharacterController = () => {
         }
 
         if (movement.x !== 0) {
-          rotationTarget.current += ROTATION_SPEED * movement.x;
+          rotationTarget.current +=  degToRad(0.5) * movement.x;
         }
 
          if (movement.x !== 0 || movement.z !== 0) {
           characterRotationTarget.current = Math.atan2(movement.x,movement.z);
           vel.x =-Math.sin(rotationTarget.current + characterRotationTarget.current)*speed;
           vel.z =-Math.cos(rotationTarget.current + characterRotationTarget.current)*speed;
-          if (speed === RUN_SPEED) {
-            setAnimation("Running");
-          } else {
-            setAnimation("Walking");
-          }
+          setAnimation("Walking");
         } else {
           setAnimation("idle");
         }
@@ -251,16 +212,7 @@ export const CharacterController = () => {
     }
   });
 
-  // Toggle between character and orbit camera control
-  const toggleCameraControlMode = () => {
-    if (cameraControlMode === "character") {
-      setCameraControlMode("orbit");
-      setAnimation("idle")
-    } else {
-      setCameraControlMode("character");
-      setAnimation("idle")
-    }
-  };
+
 
   return (
     <>
@@ -280,9 +232,7 @@ export const CharacterController = () => {
       </RigidBody>
 
       {/* Toggle camera control mode */}
-      <Text onClick={toggleCameraControlMode}>
-        {cameraControlMode === "character" ? "Switch to Orbit" : "Switch to Character"}
-      </Text>
+     
       
 
       {/* OrbitControls */}

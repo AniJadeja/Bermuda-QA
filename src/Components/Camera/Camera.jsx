@@ -5,7 +5,7 @@ import { useThree} from "@react-three/fiber";
 import { OrbitControls} from "@react-three/drei";
 import { setCameraRef } from "./CameraControls";
 import { RigidBody } from "@react-three/rapier";
-import useCounterStore from "../GlobalData/GlobalData";
+
 const Camera = () => {
 
   
