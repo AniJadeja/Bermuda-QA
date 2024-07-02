@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Html, OrbitControls } from "@react-three/drei";
 import useCounterStore from "./Components/GlobalData/GlobalData";
 import { KeyboardControls } from "@react-three/drei";
+import PopupButton from "./Components/Popup/PopupButton";
 
 const keyboardMap = [
   { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -21,13 +22,9 @@ function App() {
       style={{
         height: "100vh",
         width: "100vw",
-      }}
-    >
-      <Canvas
-        style={{
-          height: "100vh",
-        }}
-      >
+      }} >  
+        <PopupButton />
+      <Canvas style={{ height: "100vh" }}>
         <Suspense fallback={<Loader />}>
           <Scene />
         </Suspense>

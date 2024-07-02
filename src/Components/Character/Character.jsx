@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
-import { useMobileScreen } from "../../Context/ScreenContext.jsx";
 
 const Character = ({animation,...props}) => {
   const group = useRef();
