@@ -3,8 +3,6 @@ import Character from "./Character";
 import { useEffect, useRef, useState } from "react";
 import { Vector3, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useControls } from "leva";
-
 import { OrbitControls, Text, Text3D, useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";

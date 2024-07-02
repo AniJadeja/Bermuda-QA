@@ -1,8 +1,4 @@
-import { Canvas } from "@react-three/fiber";
 import Scene from "./Components/Scene";
-import { Suspense } from "react";
-import { Html, OrbitControls } from "@react-three/drei";
-import { KeyboardControls } from "@react-three/drei";
 import Nipple from "react-nipple";
 import { movementCharacter } from "./Components/Character/CharacterControls.jsx";
  import { useCameraControlStore } from "./Components/GlobalData/GlobalData"; 
