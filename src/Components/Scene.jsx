@@ -2,11 +2,11 @@ import { Physics } from "@react-three/rapier";
 import Hall from "./Hall";
 import Camera from "./Camera/Camera";
 import Character from "./Character/Character";
+import { CharacterController } from "./Character/CharacterControls.jsx";
 import Question from "./Question/Question";
 import { Environment, Text } from "@react-three/drei";
 import * as THREE from 'three';
 import { Canvas, useThree } from '@react-three/fiber';
-
 
 const Scene = () => {
   return (
@@ -20,7 +20,7 @@ const Scene = () => {
         />
         <Hall />
         <Camera />
-        <Character />
+         <CharacterController/>
         <Question />
       </Physics>
     </>
