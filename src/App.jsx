@@ -1,56 +1,68 @@
-import { Canvas } from "@react-three/fiber";
 import Scene from "./Components/Scene";
-import { Suspense } from "react";
-import { Html, OrbitControls } from "@react-three/drei";
-import useCounterStore from "./Components/GlobalData/GlobalData";
-import { KeyboardControls } from "@react-three/drei";
-import PopupButton from "./Components/Popup/PopupButton";
+import Nipple from "react-nipple";
+import { movementCharacter } from "./Components/Character/CharacterControls.jsx";
+ import { useCameraControlStore } from "./Components/GlobalData/GlobalData"; 
+ import PopupButton from "./Components/Popup/PopupButton";
+const JoyStrikStart = (data) => {
+  console.log("data", data);
 
-const keyboardMap = [
-  { name: "forward", keys: ["ArrowUp", "KeyW"] },
-  { name: "backward", keys: ["ArrowDown", "KeyS"] },
-  { name: "left", keys: ["ArrowLeft", "KeyA"] },
-  { name: "right", keys: ["ArrowRight", "KeyD"] },
-  { name: "run", keys: ["Shift"] },
-];
+  if (data && data.direction && data.direction.angle == "up") {
+    movementCharacter.z=1
+  }
+
+   if (data.direction && data.direction.angle == "right") {
+    movementCharacter.x=-1
+}
+
+if (data.direction && data.direction.angle == "left") {
+movementCharacter.x=1
+}
+ if (data.direction && data.direction.angle == "down") {
+  movementCharacter.z=-1
+ }
+};
+
+const JoyStrikEnd = (d) => {
+  movementCharacter.z=0
+  movementCharacter.x=0
+};
 
 function App() {
-  const { Orbitcontroll, increment, decrement } = useCounterStore();
+
+  const { cameraControlMode, setCameraControlMode } = useCameraControlStore(); 
+
+ 
+  
+ 
   return (
-    <KeyboardControls map={keyboardMap} >
-    <div
-      style={{
-        height: "100vh",
-        width: "100vw",
-      }} >  
-        <PopupButton />
-      <Canvas style={{ height: "100vh" }}>
-        <Suspense fallback={<Loader />}>
-          <Scene />
-        </Suspense>
-      </Canvas>
-      <div style={{position:"absolute"}}>
-      <button  onClick={increment}> true</button>
-      <button  onClick={decrement}>false</button>
-      </div>
-    </div>
-    </KeyboardControls>
+<div>
+<PopupButton />
+  <Scene/>
+
+  <Nipple
+       options={{ mode: "static", position: { bottom: "50px", left: "50px" } }}
+       style={{
+           width: 100,
+           height: 100,
+           position: "absolute",
+           bottom: "50px",
+           left: "50px",
+         }}
+         
+         onMove={(evt, data) => {
+           if (data && data) {
+             JoyStrikStart(data);
+          }
+         }}
+         onEnd={(e, d) => JoyStrikEnd(d)}
+       />
+    <button style={{      display:"flex","align-items":"center","justify-content":"center"  ,"position": "fixed",width:"50px",height:"50px",textAlign:"center",
+    bottom:"52px",
+    right:"0px"}}>{cameraControlMode=="character"?<p  style={{textAlign:"center",fontSize:"10px"}}onClick={(e)=>{setCameraControlMode("orbit")}}>360-View</p>:<p  style={{textAlign:"center",fontSize:"10px"}} onClick={(e)=>{setCameraControlMode("character")}}>Character-view</p>}</button>
+  </div>
   );
 }
 
-const Loader = () => {
-  return (
-    <Html>
-      <h1
-        style={{
-        /*   color: "white", */
-          textAlign: "center",
-        }}
-      >
-        Loading ...
-      </h1>
-    </Html>
-  );
-};
+
 
 export default App;
