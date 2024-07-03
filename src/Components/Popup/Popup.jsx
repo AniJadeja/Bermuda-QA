@@ -38,7 +38,7 @@ const Popup = ({ name, onClose }) => {
   };
 
   const handlePost = () => {
-    console.log("Posting:", inputText);
+    ("Posting:", inputText);
     // Add your post logic here
   };
 

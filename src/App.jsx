@@ -5,8 +5,6 @@ import { useCameraControlStore } from "./Components/GlobalData/GlobalData";
 import PopupButton from "./Components/Popup/PopupButton";
 
 const JoyStrikStart = (data) => {
-  console.log("data", data);
-
   if (data && data.direction && data.direction.angle == "up") {
     movementCharacter.z = 1;
   }

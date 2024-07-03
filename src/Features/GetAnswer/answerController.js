@@ -7,7 +7,6 @@ export const getAnswer = async (questionId) => {
     if (response) {
       return new AnswerModel(response);
     } else {
-      console.log("Question Id : ", questionId, "\n Response : ", response);
       throw new Error("Invalid response !!");
     }
   } catch (error) {
