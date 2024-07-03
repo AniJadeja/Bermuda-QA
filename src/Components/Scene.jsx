@@ -48,7 +48,7 @@ const Scene = () => {
       >
 
 <Suspense fallback={<Loader />}>
-      <Physics debug>
+      <Physics >
       <Environment
           files="/assets/street.hdr" // Replace with your actual HDRI file path
           background // Whether to set the environment map as the scene background
