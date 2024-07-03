@@ -8,6 +8,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ScreenProvider>
       <App />
+      
     </ScreenProvider>
+
   </React.StrictMode>
 );
