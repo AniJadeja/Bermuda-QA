@@ -63,7 +63,6 @@ export const CharacterController = () => {
   
 
   useEffect(() => {
-    console.log("count",count)
     // Add event listener when component mounts
     window.addEventListener('wheel', handleScroll);
     cameraPosition.current
@@ -214,7 +213,6 @@ export const CharacterController = () => {
 
   return (
     <>
-    { console.log("count",count)}
       <RigidBody colliders={false} lockRotations ref={rb}>
         <ambientLight />
         <group ref={container}>
