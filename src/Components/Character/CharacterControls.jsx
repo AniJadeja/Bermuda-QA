@@ -127,13 +127,10 @@ export const CharacterController = () => {
         };
 
         if(movementCharacter.x>0||movementCharacter.x<0){
-          console.log("movementCharacter x", movementCharacter.x)
-
           movement.x= movementCharacter.x
         }
 
         if(movementCharacter.z>0||movementCharacter.z<0){
-          console.log("movementCharacter z", movementCharacter.z)
           movement.z= movementCharacter.z
         }
 

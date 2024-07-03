@@ -8,7 +8,6 @@ export const getQuestion = async (question) => {
         return new QuestionModel(response);
     }
     else{
-        console.log("Question : ", question, "\nResponse : ", response);
         throw new Error("Invalid response !!");
     }
   } catch (error) {
