@@ -94,7 +94,7 @@ const Popup = ({ name, onClose }) => {
             <div className={`slider ${selectedOption}`}></div>
           </div>
           <div className="content">
-            <div className="avatar">{name[0].toUpperCase()}</div>
+            <div className="avatar">{ name ?  name[0].toUpperCase() : null}</div>
             <img
               alt="name highlight arrow"
               src={arrow}
