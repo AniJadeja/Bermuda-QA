@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Popup.css";
-import arrow from '/assets/Popup/arrow.svg'
+import arrow from "/assets/Popup/arrow.svg";
+import { useCharacterState } from "../../Context/characterContext";
 
 const Popup = ({ name, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("ask");
@@ -9,24 +10,42 @@ const Popup = ({ name, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
   const popupRef = useRef(null);
 
+  const {
+    IS_CHARACTER_MOVABLE,
+    setCharacterMovable,
+    setCharacterControllable,
+    isCharacterControllable,
+  } = useCharacterState();
+
   useEffect(() => {
     const words = inputText.trim().split(/\s+/);
     setWordCount(words.length === 1 && words[0] === "" ? 0 : words.length);
   }, [inputText]);
 
   useEffect(() => {
-    setIsVisible(true);
-    document.addEventListener('keydown', handleEscKey);
-    document.addEventListener('mousedown', handleOutsideClick);
+    try {
+      if (isCharacterControllable) setCharacterMovable(false);
+      else throw new Error("Character controls is in use");
+      setCharacterMovable(false);
+      setIsVisible(true);
+      document.addEventListener("keydown", handleEscKey);
+      document.addEventListener("mousedown", handleOutsideClick);
 
-    return () => {
-      document.removeEventListener('keydown', handleEscKey);
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
+      return () => {
+        document.removeEventListener("keydown", handleEscKey);
+        document.removeEventListener("mousedown", handleOutsideClick);
+        setCharacterMovable(true);
+        setCharacterControllable(true);
+      };
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
+  useEffect(()=>console.log("IS_CHAR , ", IS_CHARACTER_MOVABLE),[IS_CHARACTER_MOVABLE])
+
   const handleEscKey = (event) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       handleClose();
     }
   };
@@ -38,7 +57,7 @@ const Popup = ({ name, onClose }) => {
   };
 
   const handlePost = () => {
-    ("Posting:", inputText);
+    console.log("Posting:", inputText);
     // Add your post logic here
   };
 
@@ -48,49 +67,59 @@ const Popup = ({ name, onClose }) => {
   };
 
   return (
-    <div className={`popup-overlay ${isVisible ? 'visible' : ''}`}>
-      <div ref={popupRef} className={`popup ${isVisible ? 'visible' : ''}`}>
-        <div className="header">
-          <button className="close-button" onClick={handleClose}></button>
-          <div className="navButtons">
-            <button
-              className={`option ${selectedOption === "ask" ? "active" : ""}`}
-              onClick={() => setSelectedOption("ask")}
-            >
-              Ask a Question
-            </button>
-            <button
-              className={`option ${selectedOption === "post" ? "active" : ""}`}
-              onClick={() => setSelectedOption("post")}
-            >
-              Post an Answer
+    isVisible && (
+      <div className={`popup-overlay ${isVisible ? "visible" : ""}`}>
+        <div ref={popupRef} className={`popup ${isVisible ? "visible" : ""}`}>
+          <div className="header">
+            <button className="close-button" onClick={handleClose}></button>
+            <div className="navButtons">
+              <button
+                className={`option ${selectedOption === "ask" ? "active" : ""}`}
+                onClick={() => setSelectedOption("ask")}
+              >
+                Ask a Question
+              </button>
+              <button
+                className={`option ${
+                  selectedOption === "post" ? "active" : ""
+                }`}
+                onClick={() => setSelectedOption("post")}
+              >
+                Post an Answer
+              </button>
+            </div>
+            <div className={`slider ${selectedOption}`}></div>
+          </div>
+          <div className="content">
+            <div className="avatar">{name[0].toUpperCase()}</div>
+            <img
+              alt="name highlight arrow"
+              src={arrow}
+              height={30}
+              width={30}
+              style={{
+                transform: "rotate(90deg)",
+                marginRight: "5px",
+              }}
+            />
+            <p>{name}</p>
+          </div>
+          <textarea
+            placeholder={`Something awesome you may want to ${
+              selectedOption === "ask" ? "ask" : "answer"
+            }...`}
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+          />
+          <div className="footer">
+            <span className="word-count">{wordCount}/70</span>
+            <button className="post-button" onClick={handlePost}>
+              POST →
             </button>
           </div>
-          <div className={`slider ${selectedOption}`}></div>
-        </div>
-        <div className="content">
-          <div className="avatar">{name[0].toUpperCase()}</div>
-          <img alt="name highlight arrow" src={arrow} height={30} width={30} style={{
-              transform:' rotate(90deg)',
-              marginRight: '5px'
-          }} />
-          <p>{name}</p>
-        </div>
-        <textarea
-          placeholder={`Something awesome you may want to ${
-            selectedOption === "ask" ? "ask" : "answer"
-          }...`}
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-        />
-        <div className="footer">
-          <span className="word-count">{wordCount}/70</span>
-          <button className="post-button" onClick={handlePost}>
-            POST →
-          </button>
         </div>
       </div>
-    </div>
+    )
   );
 };
 
