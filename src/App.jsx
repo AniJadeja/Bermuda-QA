@@ -5,6 +5,7 @@ import Nipple from "react-nipple";
 import { movementCharacter } from "./Components/Character/CharacterControls.jsx";
 import { useCameraControlStore } from "./Components/GlobalData/GlobalData";
 import PopupButton from "./Components/Popup/PopupButton";
+import DisplayAnswers from "./Components/AnswerPopup/DisplayAnswers.jsx";
 import { useMobileScreen } from "./Context/ScreenContext.jsx";
 import { useCallback } from "react";
 import { useCharacterState } from './Context/characterContext.jsx'
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <div>
+      <DisplayAnswers />
       <PopupButton />
       <Scene />
       {
