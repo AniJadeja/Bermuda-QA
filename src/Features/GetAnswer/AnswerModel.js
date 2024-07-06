@@ -1,3 +1,5 @@
+import { AnswerError } from './answerError'
+
 class AnswerModel {
   constructor(answerModel) {
     this.id = this.validateId(answerModel.id);

@@ -1,7 +1,7 @@
 import React from "react";
 import AnswerPopup from "./AnswerPopup";
 import { create } from "zustand";
-
+import { usePopupStore } from "../Popup/PopupButton";
 
 export const useDisplayControl = create((set) => ({
   showAnswers: false,
@@ -10,10 +10,14 @@ export const useDisplayControl = create((set) => ({
 
 const AnsController = () => {
   const { showAnswers, toggle } = useDisplayControl();
-
+  const { showPopup, setShowPopup } = usePopupStore();
   const handlePostAnswer = () => {
-    console.log("Posting a new answer");
+    toggle();
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 300); // 300ms delay
   };
+  
 
   return (
     <>

@@ -4,6 +4,7 @@ import QuestionWrapper from "./QuestionWrapper";
 import { getQuestionFromURL } from "../../utils/browserUtils";
 import { getQuestion } from "../../Features/GetQuestion/questionController";
 import { getAnswer } from "../../Features/GetAnswer/answerController";
+import { useAnswerStore } from "../AnswerPopup/AnswerPopup";
 
 const Question = () => {
   const LOADING = "Loading";
@@ -17,12 +18,16 @@ const Question = () => {
 
   const [dataLoaded, setDataLoaded] = useState(LOADING);
 
+  const { answers, setAnswers } = useAnswerStore();
+
   useEffect(() => {
     (async () => {
       try {
         setDataLoaded(LOADING);
         const question = getQuestionFromURL();
-        setQuestion(question + "?");
+        question == ""
+          ? setQuestion("No Question Provided")
+          : setQuestion(question + "?");
         const questionData = await getQuestion(question);
         if (!questionData) {
           setDataLoaded(FAILED);
@@ -37,6 +42,8 @@ const Question = () => {
         }
         setAnswerer(answerData.pname);
         setAnswer(answerData.answer);
+        console.log("Setting answerData : ", answerData)
+        setAnswers(answerData)
         setDataLoaded(SUCCESS);
       } catch (error) {
         setDataLoaded(FAILED);
@@ -66,10 +73,10 @@ const Question = () => {
       <QuestionWrapper positions={positions} fontSizes={fontSizes}>
         <QuestionWrapper.UserName>{questioner}</QuestionWrapper.UserName>
         <QuestionWrapper.QuestionText>{question}</QuestionWrapper.QuestionText>
-        <QuestionWrapper.Answer>{answer}</QuestionWrapper.Answer>
+        {/* <QuestionWrapper.Answer>{answer}</QuestionWrapper.Answer>
         <QuestionWrapper.AnswerUserName>
           {answerer}
-        </QuestionWrapper.AnswerUserName>
+        </QuestionWrapper.AnswerUserName> */}
       </QuestionWrapper>
     );
   } else if (dataLoaded === LOADING) {
@@ -89,7 +96,7 @@ const Question = () => {
         anchorX="center"
         anchorY="middle"
       >
-        No answer found for the question : {question}
+        {question}
       </Text>
     );
   }

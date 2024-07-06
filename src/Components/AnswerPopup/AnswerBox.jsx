@@ -59,7 +59,7 @@ const AnswerBox = ({ children, onClick }) => {
         onClick={handleClick} 
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        position={[6 ,2.5,-7]} 
+        position={[6 ,2.5,-7.5]} 
         rotation={[0,-1.5,0]}
       >
         <RoundedBox

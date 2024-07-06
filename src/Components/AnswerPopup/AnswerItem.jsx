@@ -1,9 +1,13 @@
 import React from 'react';
 
-const AnswerItem = ({ id, content, votes, onUpvote, onDownvote }) => {
+
+const AnswerItem = ({ id, content, votes, onUpvote, onDownvote , pname, date}) => {
   return (
     <div className="answer-item">
-      <h6>{content}</h6>
+      
+      <h4 id='pname'>{pname}</h4>
+      <p>{content}</p>
+      <p id='date'>Date: {date}</p>
       <div className="vote-buttons">
         <button onClick={() => onUpvote(id)} className="vote-button up">▲</button>
         <span className="vote-count">{votes}</span>
@@ -12,5 +16,6 @@ const AnswerItem = ({ id, content, votes, onUpvote, onDownvote }) => {
     </div>
   );
 };
+
 
 export default AnswerItem;
