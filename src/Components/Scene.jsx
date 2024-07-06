@@ -10,6 +10,7 @@ import { Html, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import Question from "./Question/Question";
 import PointingCharacter from "./PointingCharacter";
+import DisplayAnswers from "./AnswerPopup/DisplayAnswers";
 
 const Loader = () => {
   return (
@@ -52,6 +53,7 @@ const Scene = () => {
                 <Camera />
                 <CharacterController />
                 <PointingCharacter />
+                <DisplayAnswers />
                 <Question />
               </Physics>
             </Suspense>

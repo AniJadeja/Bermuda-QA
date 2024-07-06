@@ -2,10 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import AnswerItem from './AnswerItem';
 import './AnswerPopup.css';
 
-const AnswerPopup = ({ onClose, answers, onPostAnswer }) => {
+const AnswerPopup = ({ onClose, onPostAnswer }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const popupRef = useRef(null);
+
+  const [answers, setAnswers] = useState([
+    { id: 1, content: "This is answer 1", votes: 1 },
+    { id: 2, content: "This is answer 2", votes: 2 },
+    // ... more answers
+  ]);
 
   useEffect(() => {
     setIsVisible(true);
