@@ -8,6 +8,7 @@ import PopupButton from "./Components/Popup/PopupButton";
 import { useMobileScreen } from "./Context/ScreenContext.jsx";
 import { useCallback } from "react";
 import { useCharacterState } from './Context/characterContext.jsx'
+import AnsController from "./Components/AnswerPopup/AnsController.jsx";
 
 function App() {
   const joyStickStart = useCallback((data) => {
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <div>
+      <AnsController/>
       <PopupButton />
       <Scene />
       {

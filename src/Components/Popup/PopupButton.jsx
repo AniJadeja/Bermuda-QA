@@ -1,9 +1,18 @@
 import { useState } from "react";
 import Popup from "./Popup";
 import qa from "/assets/Popup/chat.svg";
+import { create } from "zustand";
+
+export const usePopupStore = create((set) => ({
+  showPopup: false,
+  setShowPopup: (state) => set({ showPopup: state }),
+}));
+
+
+
 
 const PopupButton = () => {
-  const [showPopup, setShowPopup] = useState(false);
+  const  { showPopup, setShowPopup } = usePopupStore();
 
   const handleClose = () => {
     setShowPopup(false);
