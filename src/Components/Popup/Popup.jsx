@@ -1,3 +1,5 @@
+// popup.jsx
+
 import React, { useState, useEffect, useRef } from "react";
 import "./Popup.css";
 import arrow from "/assets/Popup/arrow.svg";
@@ -24,9 +26,12 @@ const Popup = ({ name, onClose }) => {
 
   useEffect(() => {
     try {
-      if (isCharacterControllable) setCharacterMovable(false);
-      else throw new Error("Character controls is in use");
-      setCharacterMovable(false);
+      if (isCharacterControllable) {
+        setCharacterMovable(false);
+        setCharacterControllable(false);
+      } else {
+        throw new Error("Character controls is in use");
+      }
       setIsVisible(true);
       document.addEventListener("keydown", handleEscKey);
       document.addEventListener("mousedown", handleOutsideClick);
@@ -41,8 +46,6 @@ const Popup = ({ name, onClose }) => {
       console.error(error);
     }
   }, []);
-
-  useEffect(()=>console.log("IS_CHAR , ", IS_CHARACTER_MOVABLE),[IS_CHARACTER_MOVABLE])
 
   const handleEscKey = (event) => {
     if (event.key === "Escape") {
