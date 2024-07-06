@@ -8,6 +8,9 @@ import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
 import {useCameraControlStore }from "../GlobalData/GlobalData";
+import { useCharacterState } from '../../Context/characterContext'
+
+
 export let movementCharacter={
   x:0,
   y:0
@@ -16,7 +19,7 @@ export const CharacterController = () => {
 
   const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
-
+  const {IS_CHARACTER_MOVABLE} = useCharacterState();
   const {
     rb,
     container,
@@ -113,29 +116,24 @@ export const CharacterController = () => {
 
 
 
-  // State to determine camera control mode
- /*  const [cameraControlMode, setCameraControlMode] = useState("character"); */
-
-  useFrame(({ camera, mouse }) => {
+  const moveCharacter = (camera) =>{
     if (cameraControlMode === "character") {
       if (rb.current) {
         const vel = rb.current.linvel();
 
-    const movement = {
+        const movement = {
           x: 0,
           z: 0,
         };
 
-        if(movementCharacter.x>0||movementCharacter.x<0){
-          movement.x= movementCharacter.x
+        if (movementCharacter.x > 0 || movementCharacter.x < 0) {
+          movement.x = movementCharacter.x;
         }
 
-        if(movementCharacter.z>0||movementCharacter.z<0){
-          movement.z= movementCharacter.z
+        if (movementCharacter.z > 0 || movementCharacter.z < 0) {
+          movement.z = movementCharacter.z;
         }
 
-
-    
         if (get().forward) {
           movement.z = 1;
         }
@@ -143,43 +141,39 @@ export const CharacterController = () => {
           movement.z = -1;
         }
 
-        let speed = 1
-
-     /*    if (isClicking.current) {
-          if (Math.abs(mouse.x) > 0.1) {
-            movement.x = -mouse.x;
-          }
-          movement.z = mouse.y + 0.4;
-          if (Math.abs(movement.x) > 0.5 || Math.abs(movement.z) > 0.5) {
-            speed = RUN_SPEED;
-          }
-        } */
+        let speed = 1;
 
         if (get().left) {
-          movement.x = 1; 
+          movement.x = 1;
         }
         if (get().right) {
-          movement.x = -1; 
+          movement.x = -1;
         }
 
         if (movement.x !== 0) {
-          rotationTarget.current +=  degToRad(0.5) * movement.x;
+          rotationTarget.current += degToRad(0.5) * movement.x;
         }
 
-         if (movement.x !== 0 || movement.z !== 0) {
-          characterRotationTarget.current = Math.atan2(movement.x,movement.z);
-          vel.x =-Math.sin(rotationTarget.current + characterRotationTarget.current)*speed;
-          vel.z =-Math.cos(rotationTarget.current + characterRotationTarget.current)*speed;
+        if (movement.x !== 0 || movement.z !== 0) {
+          characterRotationTarget.current = Math.atan2(movement.x, movement.z);
+          vel.x =
+            -Math.sin(
+              rotationTarget.current + characterRotationTarget.current
+            ) * speed;
+          vel.z =
+            -Math.cos(
+              rotationTarget.current + characterRotationTarget.current
+            ) * speed;
           setAnimation("Walking");
         } else {
           setAnimation("idle");
         }
-          
+
         character.current.rotation.y = lerpAngle(
           character.current.rotation.y,
           characterRotationTarget.current,
           0.1
-        ); 
+        );
 
         rb.current.setLinvel(vel, true);
       }
@@ -195,7 +189,9 @@ export const CharacterController = () => {
       camera.position.lerp(cameraWorldPosition.current, 0.1);
 
       if (cameraTarget.current) {
-        cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
+        cameraTarget.current.getWorldPosition(
+          cameraLookAtWorldPosition.current
+        );
         cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 0.1);
 
         camera.lookAt(cameraLookAt.current);
@@ -204,8 +200,19 @@ export const CharacterController = () => {
       // OrbitControls for camera movement
       Orbitcontroll.current.update();
     }
-  });
+  }
 
+  const prevMovableState = useRef(true);
+
+  useFrame(({ camera, mouse }) => {
+    if (IS_CHARACTER_MOVABLE) {
+      moveCharacter(camera);
+      prevMovableState.current = true;
+    } else if (prevMovableState.current) {
+      console.error("Character controls busy ...");
+      prevMovableState.current = false;
+    }
+  });
 
 
   return (

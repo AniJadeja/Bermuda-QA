@@ -28,8 +28,8 @@ function App() {
     movementCharacter.x = 0;
   };
 
-  // const isMobileScreen = useMobileScreen();
-  const isMobileScreen = true;
+ const isMobileScreen = useMobileScreen();
+//  const isMobileScreen = true;
   const {isCharacterControllable, setCharacterControllable } = useCharacterState();
 
   return (
