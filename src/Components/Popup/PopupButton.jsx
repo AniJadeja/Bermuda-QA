@@ -2,18 +2,16 @@ import { useState } from "react";
 import Popup from "./Popup";
 import qa from "/assets/Popup/chat.svg";
 import { create } from "zustand";
+import { useAuthStore } from "../../Features/Authentication/AuthStore";
 
 export const usePopupStore = create((set) => ({
   showPopup: false,
   setShowPopup: (state) => set({ showPopup: state }),
 }));
 
-
-
-
 const PopupButton = () => {
-  const  { showPopup, setShowPopup } = usePopupStore();
-
+  const { showPopup, setShowPopup } = usePopupStore();
+  const { userName } = useAuthStore();
   const handleClose = () => {
     setShowPopup(false);
   };
@@ -29,7 +27,7 @@ const PopupButton = () => {
           paddingRight: "12px",
         }}
         className="open-popup-button"
-        onClick={() =>    showPopup ? setShowPopup(false) : setShowPopup(true)}
+        onClick={() => (showPopup ? setShowPopup(false) : setShowPopup(true))}
       >
         <img
           src={qa}
@@ -44,7 +42,7 @@ const PopupButton = () => {
           }}
         />
       </button>
-      {showPopup && <Popup name="Sameer" onClose={handleClose} />}
+      {showPopup && <Popup name={userName} onClose={handleClose} />}
     </>
   );
 };
