@@ -38,9 +38,6 @@ function App() {
       <AnsController/>
       <PopupButton />
       <Scene />
-      {
-        console.log("Character controllable : ", isCharacterControllable)
-      }
       {isMobileScreen && isCharacterControllable ? (
         <Nipple
           options={{

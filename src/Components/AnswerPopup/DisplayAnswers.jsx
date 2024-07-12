@@ -8,7 +8,6 @@ import { useDisplayControl } from "./AnsController";
 const DisplayAnswers = () => {
   const { showAnswers, toggle } = useDisplayControl();
   const openAnswersPopup = () => {
-    console.log("Opening the answer popup");
     toggle();
   };
 
