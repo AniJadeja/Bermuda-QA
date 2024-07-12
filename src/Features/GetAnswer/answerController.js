@@ -5,8 +5,6 @@ export const getAnswer = async (questionId) => {
   try {
     let response = await getAnswerForQuestion(questionId);
 
-    console.log("Answer API Response: ", response);
-
     if (response) {
       let answersArray = [];
 
@@ -29,6 +27,6 @@ export const getAnswer = async (questionId) => {
       throw new Error("Invalid response !!");
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

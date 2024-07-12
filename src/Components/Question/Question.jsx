@@ -42,7 +42,6 @@ const Question = () => {
         }
         setAnswerer(answerData.pname);
         setAnswer(answerData.answer);
-        console.log("Setting answerData : ", answerData)
         setAnswers(answerData)
         setDataLoaded(SUCCESS);
       } catch (error) {
