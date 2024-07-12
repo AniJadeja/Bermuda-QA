@@ -234,11 +234,11 @@ export const CharacterController = () => {
       );
 
       cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-      camera.position.lerp(cameraWorldPosition.current, 0.1);
+      camera.position.lerp(cameraWorldPosition.current, 1);
 
       if (cameraTarget.current) {
         cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 0.1);
+        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 1);
 
         camera.lookAt(cameraLookAt.current);
       }
