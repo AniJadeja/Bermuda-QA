@@ -1,5 +1,4 @@
 import { create } from "zustand";
-
 export const useCounterStore = create((set) => ({
   Orbitcontroll: false,
   increment: () => set((state) => ({ Orbitcontroll: true })),

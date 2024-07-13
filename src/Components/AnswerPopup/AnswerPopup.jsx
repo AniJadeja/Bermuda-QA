@@ -69,7 +69,6 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
   const handleVote = async (id, voteType) => {
     setIsLoading(true);
     try {
-      // Simulating API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
       console.error("Error voting:", error);
