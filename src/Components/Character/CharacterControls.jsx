@@ -82,7 +82,7 @@ export const CharacterController = () => {
 
   const handleScroll = (event) => {
     const minValue = 5;
-    const maxValue = 12;
+    const maxValue = 10;
 
     const scrollDirection = event.deltaY > 0 ? "down" : "up";
 
@@ -144,7 +144,7 @@ export const CharacterController = () => {
         const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
         
         // controls the rotation direction
-        rotationTarget.current += degToRad(0.01) * deltaX;
+        rotationTarget.current += degToRad(0.1) * deltaX;
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
