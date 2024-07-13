@@ -6,6 +6,9 @@ import { create } from "zustand";
 import { usePopupStore } from "../Popup/PopupButton";
 import { useDisplayControl } from "./AnsController";
 import { useCharacterState } from "../../Context/characterContext";
+import { useUserData } from "../../Context/userContext";
+import { addUpVote } from "../../Features/AddUpvotes/upvoteController";
+import { removeVote } from "../../Features/RemoveVote/removeVoteController";
 
 export const useAnswerStore = create((set) => ({
   answers: [],
@@ -25,6 +28,8 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     setCharacterControllable,
     isCharacterControllable,
   } = useCharacterState();
+
+  const { user, pname } = useUserData();
 
   useEffect(() => {
     try {
@@ -66,10 +71,23 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     }
   };
 
-  const handleVote = async (id, voteType) => {
+  const handleVote = async (id, voteType, totalUpVotes) => {
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const totalVotes =
+        voteType == "up" ? totalUpVotes + 1 : totalUpVotes - 1;
+      console.log("Vote type ", voteType)
+      if (voteType == "up") {
+        // upvote api needs user, ansid, totalupvotes,
+        const upvoteResponse = await addUpVote(user, id, totalVotes);
+        console.log("Upvote response : ", upvoteResponse);
+        if (!upvoteResponse) throw new Error("Upvote response is null..");
+      } else {
+        console.log("Downvoting")
+        const downvoteResponse = await removeVote(user, id, totalVotes);
+        console.log("Downvote response : ", downvoteResponse);
+        if (!downvoteResponse) throw new Error("Downvote response is null..");
+      }
     } catch (error) {
       console.error("Error voting:", error);
     } finally {
@@ -97,8 +115,8 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
               id={answer.id}
               content={answer.answer}
               votes={answer.upvote}
-              onUpvote={() => handleVote(answer.id, "up")}
-              onDownvote={() => handleVote(answer.id, "down")}
+              onUpvote={() => handleVote(answer.id, "up", answer.upvote)}
+              onDownvote={() => handleVote(answer.id, "down", answer.upvote)}
               pname={answer.pname}
               date={answer.date}
               user={answer.user}
