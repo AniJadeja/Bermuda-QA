@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getMyVote } from "../../Features/GetMyVote/myVoteController";
+import { useAuthStore } from "../../Features/Authentication/AuthStore";
+
 
 const AnswerItem = ({
   id,
@@ -13,11 +15,12 @@ const AnswerItem = ({
 }) => {
   const [isUpVoted, setIsUpVoted] = useState();
   const [isDownVoted, setIsDownVoted] = useState();
-
+  const {email} = useAuthStore();
   useEffect(() => {
     (async () => {
-      const myVote = await getMyVote(user, id);
+      const myVote = await getMyVote(email, id);
       if (myVote) {
+        console.log("User already voted..")
         setIsUpVoted(true);
       } else {
         setIsUpVoted(false);
