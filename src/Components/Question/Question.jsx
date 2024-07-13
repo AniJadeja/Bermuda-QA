@@ -5,6 +5,7 @@ import { getQuestionFromURL } from "../../utils/browserUtils";
 import { getQuestion } from "../../Features/GetQuestion/questionController";
 import { getAnswer } from "../../Features/GetAnswer/answerController";
 import { useAnswerStore } from "../AnswerPopup/AnswerPopup";
+import { usePopupStore } from "../Popup/PopupButton";
 
 const Question = () => {
   const LOADING = "Loading";
@@ -19,6 +20,8 @@ const Question = () => {
   const [dataLoaded, setDataLoaded] = useState(LOADING);
 
   const { answers, setAnswers } = useAnswerStore();
+
+  const { setQuestionId } = usePopupStore();
 
   useEffect(() => {
     (async () => {
@@ -35,6 +38,7 @@ const Question = () => {
         }
         setQuestion(questionData.question);
         setQuestioner(questionData.asker);
+        setQuestionId(questionData.id)
         const answerData = await getAnswer(questionData.id);
         if (!answerData) {
           setDataLoaded(FAILED);

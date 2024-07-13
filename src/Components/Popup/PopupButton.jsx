@@ -6,7 +6,9 @@ import { useAuthStore } from "../../Features/Authentication/AuthStore";
 
 export const usePopupStore = create((set) => ({
   showPopup: false,
+  questionId : null,
   setShowPopup: (state) => set({ showPopup: state }),
+  setQuestionId : (id) => set ({questionId : id})
 }));
 
 const PopupButton = () => {
