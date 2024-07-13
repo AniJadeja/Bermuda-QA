@@ -59,7 +59,7 @@ export const CharacterController = () => {
         const deltaX = event.clientX - initialMousePosition.current.x;
         
         // controls the camera rotation direction
-        rotationTarget.current -= degToRad(0.5) * deltaX; 
+        rotationTarget.current += degToRad(0.5) * deltaX; 
 
         initialMousePosition.current = { x: event.clientX, y: event.clientY };
       }
@@ -144,7 +144,7 @@ export const CharacterController = () => {
         const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
         
         // controls the rotation direction
-        rotationTarget.current -= degToRad(0.01) * deltaX;
+        rotationTarget.current += degToRad(0.01) * deltaX;
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
