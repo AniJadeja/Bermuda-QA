@@ -10,6 +10,7 @@ import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
 import { useCameraControlStore } from "../GlobalData/GlobalData";
+import { useCharacterState } from '../../Context/characterContext'
 
 export let movementCharacter = {
   x: 0,
@@ -19,6 +20,7 @@ export let movementCharacter = {
 export const CharacterController = () => {
   const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
+  const { IS_CHARACTER_MOVABLE } = useCharacterState();
 
   const {
     rb,
@@ -51,11 +53,11 @@ export const CharacterController = () => {
       setIsMouseDown(true);
       initialMousePosition.current = { x: event.clientX, y: event.clientY };
     };
-
+ 
     const handleMouseMove = (event) => {
       if (isMouseDown) {
         const deltaX = event.clientX - initialMousePosition.current.x;
-        rotationTarget.current -= degToRad(0.5) * deltaX; // Changed += to -=
+        rotationTarget.current += degToRad(0.5) * deltaX; 
 
         initialMousePosition.current = { x: event.clientX, y: event.clientY };
       }
@@ -97,7 +99,6 @@ export const CharacterController = () => {
   };
 
   useEffect(() => {
-    console.log("count", count);
     window.addEventListener("wheel", handleScroll);
 
     return () => {
@@ -139,7 +140,7 @@ export const CharacterController = () => {
     const onTouchMove = (e) => {
       if (isClicking.current) {
         const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
-        rotationTarget.current -= degToRad(0.01) * deltaX; // Changed += to -=
+        rotationTarget.current -= degToRad(0.01) * deltaX;
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
@@ -167,7 +168,7 @@ export const CharacterController = () => {
   }, []);
 
   useFrame(({ camera, mouse }) => {
-    if (cameraControlMode === "character") {
+    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE ) {
       if (rb.current) {
         const vel = rb.current.linvel();
 
@@ -177,12 +178,10 @@ export const CharacterController = () => {
         };
 
         if (movementCharacter.x > 0 || movementCharacter.x < 0) {
-          console.log("movementCharacter x", movementCharacter.x);
           movement.x = movementCharacter.x;
         }
 
         if (movementCharacter.z > 0 || movementCharacter.z < 0) {
-          console.log("movementCharacter z", movementCharacter.z);
           movement.z = movementCharacter.z;
         }
 
@@ -192,9 +191,6 @@ export const CharacterController = () => {
         if (get().backward) {
           movement.z = -1;
         }
-
-        let speed = 1;
-
         if (get().left) {
           movement.x = 1;
         }
@@ -202,24 +198,27 @@ export const CharacterController = () => {
           movement.x = -1;
         }
 
-        if (movement.x !== 0) {
-          rotationTarget.current += degToRad(0.5) * movement.x;
-        }
+        let speed = 1;
+        let isMoving = false;
 
         if (movement.x !== 0 || movement.z !== 0) {
-          characterRotationTarget.current = Math.atan2(movement.x, movement.z);
-          vel.x = -Math.sin(rotationTarget.current + characterRotationTarget.current) * speed;
-          vel.z = -Math.cos(rotationTarget.current + characterRotationTarget.current) * speed;
+          isMoving = true;
+          characterRotationTarget.current = container.current.rotation.y + Math.atan2(movement.x, movement.z);
+          vel.x = -Math.sin(characterRotationTarget.current) * speed;
+          vel.z = -Math.cos(characterRotationTarget.current) * speed;
           setAnimation("Walking");
         } else {
           setAnimation("idle");
         }
 
-        character.current.rotation.y = lerpAngle(
-          character.current.rotation.y,
-          characterRotationTarget.current,
-          0.1
-        );
+        // Only rotate the character if it's moving
+        if (isMoving) {
+          character.current.rotation.y = lerpAngle(
+            character.current.rotation.y,
+            characterRotationTarget.current,
+            0.1
+          );
+        }
 
         rb.current.setLinvel(vel, true);
       }
@@ -234,11 +233,11 @@ export const CharacterController = () => {
       );
 
       cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-      camera.position.lerp(cameraWorldPosition.current, 0.1);
+      camera.position.lerp(cameraWorldPosition.current, 1);
 
       if (cameraTarget.current) {
         cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 0.1);
+        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 1);
 
         camera.lookAt(cameraLookAt.current);
       }
@@ -249,15 +248,14 @@ export const CharacterController = () => {
 
   return (
     <>
-      {console.log("count", count)}
       <RigidBody colliders={false} lockRotations ref={rb}>
         <ambientLight />
         <group ref={container}>
           <group ref={cameraTarget} position-z={-8} />
           <group ref={cameraPosition} position-y={8} position-z={7} />
-          <group ref={character}>
-            <Character position={[0, 3, 0]} animation={animation} />
-          </group>
+        </group>
+        <group ref={character}>
+          <Character position={[0, 3, 0]} animation={animation} />
         </group>
         <CapsuleCollider args={[0.7, 0.3]} position={[0, 4, 0]} />
       </RigidBody>

@@ -38,7 +38,6 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
       setIsVisible(true);
       document.addEventListener("mousedown", handleOutsideClick);
       document.addEventListener("keydown", handleEscKey);
-      console.log("Answers in popup : ", answers);
       return () => {
         document.removeEventListener("mousedown", handleOutsideClick);
         document.removeEventListener("keydown", handleEscKey);
@@ -72,8 +71,6 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     try {
       // Simulating API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Update the vote count here based on the response
-      console.log(`Voted ${voteType} for answer ${id}`);
     } catch (error) {
       console.error("Error voting:", error);
     } finally {
@@ -105,6 +102,7 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
               onDownvote={() => handleVote(answer.id, "down")}
               pname={answer.pname}
               date={answer.date}
+              user={answer.user}
             />
           ))}
         </div>

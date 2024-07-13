@@ -11,7 +11,7 @@ export const getQuestion = async (question) => {
         throw new Error("Invalid response !!");
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 };
 
