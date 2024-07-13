@@ -1,21 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getMyVote } from '../../Features/GetMyVote/myVoteController'; 
 
 
-const AnswerItem = ({ id, content, votes, onUpvote, onDownvote , pname, date}) => {
+
+const AnswerItem = ({ id, content, votes, onUpvote, onDownvote, pname, date, user }) => {
+
+  const [isUpVoted, setIsUpVoted] = useState();
+
+  useEffect(() => {
+    (async ()=>{
+      const myVote = await getMyVote(user, id);
+      if(myVote){
+        setIsUpVoted(true);
+      }
+      else{
+        setIsUpVoted(false);
+      }
+    })()
+  })
+
+
+
   return (
     <div className="answer-item">
-      
       <h4 id='pname'>{pname}</h4>
       <p>{content}</p>
       <p id='date'>Date: {date}</p>
       <div className="vote-buttons">
-        <button onClick={() => onUpvote(id)} className="vote-button up">▲</button>
+        <button onClick={isUpVoted ? null :() => onUpvote(id)} className="vote-button up">
+          <img
+            src='/assets/Popup/thumb_icon.svg'
+            width={30}
+            style={ isUpVoted ? styles.greenButton  : styles.normalUpButton}
+          />
+        </button>
         <span className="vote-count">{votes}</span>
-        <button onClick={() => onDownvote(id)} className="vote-button down">▼</button>
+        <button onClick={() => onDownvote(id)} className="vote-button down"> <img
+          src='/assets/Popup/thumb_icon.svg'
+          width={30}
+          style={styles.normalDownButton}
+        /></button>
       </div>
     </div>
   );
 };
 
+
+const styles = {
+  greenButton: {
+    filter: 'invert(93%) sepia(11%) saturate(459%) hue-rotate(79deg) brightness(100%) contrast(94%)'
+  },
+  redButton: {
+    transform: 'rotate(180deg) scaleX(-1)',
+    filter: 'invert(80%) sepia(13%) saturate(473%) hue-rotate(314deg) brightness(98%) contrast(99%)'
+  },
+  normalUpButton: {
+    filter: 'invert(60%) sepia(9%) saturate(0%) hue-rotate(150deg) brightness(90%) contrast(81%)'
+  },
+  normalDownButton: {
+    transform: 'rotate(180deg) scaleX(-1)',
+    filter: 'invert(60%) sepia(9%) saturate(0%) hue-rotate(150deg) brightness(90%) contrast(81%)'
+  }
+};
 
 export default AnswerItem;

@@ -7,7 +7,6 @@ const PointingCharacter = ({ animation, ...props }) => {
   const rigidBodyRef = useRef();
   const { scene, animations } = useGLTF("/assets/Character/pointingChar.glb");
   const { actions } = useAnimations(animations, group);
-
   return (
     <RigidBody type="fixed" colliders="trimesh">
       <group position={[6,0.18,-7.5]} rotation={[0,1.5,0]} ref={group} {...props} dispose={null}>

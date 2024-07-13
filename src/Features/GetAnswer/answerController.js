@@ -13,12 +13,18 @@ export const getAnswer = async (questionId) => {
         const jsonStrings = response.match(/({.*?})(?={|$)/g);
         answersArray = jsonStrings.map(jsonString => new AnswerModel(JSON.parse(jsonString)));
       } else if (Array.isArray(response)) {
+        const newResponse = response.map(resObj => resObj["0"])
         // Handle array of objects
-        answersArray = response.map(answerObj => new AnswerModel(answerObj));
+        answersArray = newResponse.map(answerObj => new AnswerModel(answerObj));
       } else if (typeof response === 'object') {
         // Handle single object
         answersArray = [new AnswerModel(response)];
-      } else {
+      }
+      else if (Array.isArray(response)) { 
+        // Handle array of objects
+        answersArray = response.map(answerObj => new AnswerModel(answerObj));
+      }
+      else {
         throw new Error("Invalid response format");
       }
 

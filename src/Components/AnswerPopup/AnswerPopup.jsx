@@ -101,6 +101,7 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
               onDownvote={() => handleVote(answer.id, "down")}
               pname={answer.pname}
               date={answer.date}
+              user={answer.user}
             />
           ))}
         </div>

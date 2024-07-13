@@ -10,6 +10,7 @@ import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
 import { useCameraControlStore } from "../GlobalData/GlobalData";
+import { useCharacterState } from '../../Context/characterContext'
 
 export let movementCharacter = {
   x: 0,
@@ -19,6 +20,7 @@ export let movementCharacter = {
 export const CharacterController = () => {
   const [animation, setAnimation] = useState("idle");
   const [, get] = useKeyboardControls();
+  const { IS_CHARACTER_MOVABLE } = useCharacterState();
 
   const {
     rb,
@@ -51,11 +53,13 @@ export const CharacterController = () => {
       setIsMouseDown(true);
       initialMousePosition.current = { x: event.clientX, y: event.clientY };
     };
-
+ 
     const handleMouseMove = (event) => {
       if (isMouseDown) {
         const deltaX = event.clientX - initialMousePosition.current.x;
-        rotationTarget.current -= degToRad(0.5) * deltaX; 
+        
+        // controls the camera rotation direction
+        rotationTarget.current += degToRad(0.5) * deltaX; 
 
         initialMousePosition.current = { x: event.clientX, y: event.clientY };
       }
@@ -138,7 +142,9 @@ export const CharacterController = () => {
     const onTouchMove = (e) => {
       if (isClicking.current) {
         const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
-        rotationTarget.current -= degToRad(0.01) * deltaX;
+        
+        // controls the rotation direction
+        rotationTarget.current += degToRad(0.01) * deltaX;
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
@@ -166,7 +172,7 @@ export const CharacterController = () => {
   }, []);
 
   useFrame(({ camera, mouse }) => {
-    if (cameraControlMode === "character") {
+    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE ) {
       if (rb.current) {
         const vel = rb.current.linvel();
 
@@ -176,12 +182,10 @@ export const CharacterController = () => {
         };
 
         if (movementCharacter.x > 0 || movementCharacter.x < 0) {
-          console.log("movementCharacter x", movementCharacter.x);
           movement.x = movementCharacter.x;
         }
 
         if (movementCharacter.z > 0 || movementCharacter.z < 0) {
-          console.log("movementCharacter z", movementCharacter.z);
           movement.z = movementCharacter.z;
         }
 
