@@ -6,11 +6,22 @@ import { movementCharacter } from "./Components/Character/CharacterControls.jsx"
 import { useCameraControlStore } from "./Components/GlobalData/GlobalData";
 import PopupButton from "./Components/Popup/PopupButton";
 import { useMobileScreen } from "./Context/ScreenContext.jsx";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useCharacterState } from './Context/characterContext.jsx'
 import AnsController from "./Components/AnswerPopup/AnsController.jsx";
+import { useAuthStore } from "./Features/Authentication/AuthStore.js";
+
+
+const AuthError = () =>{
+  return <h4>
+    User sign in needed..
+  </h4>
+}
+
 
 function App() {
+  const { setuserName, setEmail, userName, email } = useAuthStore();
+
   const joyStickStart = useCallback((data) => {
 
     if (data.distance > 0) {
@@ -24,6 +35,21 @@ function App() {
 
   }, []);
 
+
+  useEffect(()=>{
+
+    // TODO : handle signin logic here.
+    if(!(email && userName)) {
+      // redirect user and get the info
+    }
+
+    // only set these when user has authenticated
+    setEmail("santosh93@mail.ru")
+    setuserName("santosh")
+    // The above values are set for debugging purposes only
+  },[]) 
+
+
   const joyStickEnd = (d) => {
     movementCharacter.z = 0;
     movementCharacter.x = 0;
@@ -34,6 +60,8 @@ function App() {
   const {isCharacterControllable, setCharacterControllable } = useCharacterState();
 
   return (
+
+    email && userName ? (
     <div>
       <AnsController/>
       <PopupButton />
@@ -59,7 +87,9 @@ function App() {
           onEnd={(e, d) => joyStickEnd(d)}
         />
       ) : null}
-    </div>
+    </div>) 
+    :
+    <AuthError/>
   );
 }
 

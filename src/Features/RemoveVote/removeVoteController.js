@@ -6,6 +6,13 @@ export const removeVote = async (userId, answerId, totalUpvotes) => {
   try {
 
     let responseMyVote = await getMyVoteForAnswer(userId, answerId);
+
+    if(responseMyVote == 0)
+    {
+      throw new Error ("User has not voted. So user cannot devote")
+    }
+
+
     if(!responseMyVote){
         throw new Error("Invalid response for my vote")
     }

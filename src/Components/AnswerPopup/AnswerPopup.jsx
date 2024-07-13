@@ -6,9 +6,9 @@ import { create } from "zustand";
 import { usePopupStore } from "../Popup/PopupButton";
 import { useDisplayControl } from "./AnsController";
 import { useCharacterState } from "../../Context/characterContext";
-import { useUserData } from "../../Context/userContext";
 import { addUpVote } from "../../Features/AddUpvotes/upvoteController";
 import { removeVote } from "../../Features/RemoveVote/removeVoteController";
+import { useAuthStore } from "../../Features/Authentication/AuthStore";
 
 export const useAnswerStore = create((set) => ({
   answers: [],
@@ -29,8 +29,8 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     isCharacterControllable,
   } = useCharacterState();
 
-  const { user, pname } = useUserData();
-
+  const { email, userName } = useAuthStore();
+  
   useEffect(() => {
     try {
       if (isCharacterControllable) {
@@ -79,12 +79,12 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
       console.log("Vote type ", voteType)
       if (voteType == "up") {
         // upvote api needs user, ansid, totalupvotes,
-        const upvoteResponse = await addUpVote(user, id, totalVotes);
+        const upvoteResponse = await addUpVote(email, id, totalVotes);
         console.log("Upvote response : ", upvoteResponse);
         if (!upvoteResponse) throw new Error("Upvote response is null..");
       } else {
         console.log("Downvoting")
-        const downvoteResponse = await removeVote(user, id, totalVotes);
+        const downvoteResponse = await removeVote(email, id, totalVotes);
         console.log("Downvote response : ", downvoteResponse);
         if (!downvoteResponse) throw new Error("Downvote response is null..");
       }

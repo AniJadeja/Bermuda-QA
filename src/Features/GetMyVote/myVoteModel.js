@@ -3,7 +3,8 @@ import { MyVoteError } from './myVoteError';
 class MyVoteModel {
   constructor(myVoteModel) {
     this.id = this.validateId(myVoteModel.id);
-    this.date = this.validateDate(myVoteModel.date);
+  //  this.date = this.validateDate(myVoteModel.date);
+  // date validation has been commented because server is responding dat
   }
 
   validateId(id) {
@@ -15,9 +16,9 @@ class MyVoteModel {
   }
 
   validateDate(date) {
-    if (date === "0000-00-00") {
-      return null; // Treat "0000-00-00" as no date
-    }
+    // if (date === "0000-00-00") {
+    //   return null; // Treat "0000-00-00" as no date
+    // }
 
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     const today = new Date();
