@@ -5,20 +5,36 @@ import Character from "./Character/Character";
 import { CharacterController } from "./Character/CharacterControls";
 import { KeyboardControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Html, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import Question from "./Question/Question";
 import PointingCharacter from "./PointingCharacter";
 import DisplayAnswers from "./AnswerPopup/DisplayAnswers";
+import { create } from "zustand";
+
+export const useLoadStatusStore = create((set) => ({
+  isLoading: false,
+  setLoading: (isLoading) => set({ isLoading }),
+}));
 
 const Loader = () => {
+  const setLoading = useLoadStatusStore((state) => state.setLoading);
+
+  useEffect(() => {
+    setLoading(true);
+    return () => setLoading(false);
+  }, [setLoading]);
+
   return (
-    <Html>
-      <h1 style={{ alignContent: "center" }}>Loading ...</h1>
+    <Html center>
+      <div style={{ display: 'flex', justifyContent: 'center', height: 'auto', width: '100vw' , margin:'auto'}}>
+        <h1 style={{ textAlign: 'center' }}>Loading ...</h1>
+      </div>
     </Html>
   );
 };
+
 const keyboardMap = [
   { name: "forward", keys: ["ArrowUp", "KeyW"] },
   { name: "backward", keys: ["ArrowDown", "KeyS"] },
@@ -26,6 +42,7 @@ const keyboardMap = [
   { name: "right", keys: ["ArrowRight", "KeyD"] },
   { name: "run", keys: ["Shift"] },
 ];
+
 const Scene = () => {
   return (
     <>
