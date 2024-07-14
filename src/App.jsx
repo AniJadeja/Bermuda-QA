@@ -7,23 +7,19 @@ import { useCameraControlStore } from "./Components/GlobalData/GlobalData";
 import PopupButton from "./Components/Popup/PopupButton";
 import { useMobileScreen } from "./Context/ScreenContext.jsx";
 import { useCallback, useEffect } from "react";
-import { useCharacterState } from './Context/characterContext.jsx'
+import { useCharacterState } from "./Context/characterContext.jsx";
 import AnsController from "./Components/AnswerPopup/AnsController.jsx";
 import { useAuthStore } from "./Features/Authentication/AuthStore.js";
+import { useLoadStatusStore } from "./Components/Scene";
 
-
-const AuthError = () =>{
-  return <h4>
-    User sign in needed..
-  </h4>
-}
-
+const AuthError = () => {
+  return <h4>User sign in needed..</h4>;
+};
 
 function App() {
   const { setuserName, setEmail, userName, email } = useAuthStore();
-
+  const { isLoading } = useLoadStatusStore();
   const joyStickStart = useCallback((data) => {
-
     if (data.distance > 0) {
       // Calculate angle in radians
       const angleRad = (data.angle.degree * Math.PI) / 180;
@@ -32,39 +28,39 @@ function App() {
       movementCharacter.x = -Math.cos(angleRad);
       movementCharacter.z = Math.sin(angleRad);
     }
-
   }, []);
 
-
-  useEffect(()=>{
-
+  useEffect(() => {
     // TODO : handle signin logic here.
-    if(!(email && userName)) {
+    if (!(email && userName)) {
       // redirect user and get the info
     }
 
     // only set these when user has authenticated
-    setEmail("santosh93@mail.ru")
-    setuserName("santosh")
+    setEmail("santosh93@mail.ru");
+    setuserName("santosh");
     // The above values are set for debugging purposes only
-  },[]) 
-
+  }, []);
 
   const joyStickEnd = (d) => {
     movementCharacter.z = 0;
     movementCharacter.x = 0;
   };
 
- const isMobileScreen = useMobileScreen();
-//  const isMobileScreen = true;
-  const {isCharacterControllable, setCharacterControllable } = useCharacterState();
+  const isMobileScreen = useMobileScreen();
+  //  const isMobileScreen = true;
+  const { isCharacterControllable, setCharacterControllable } =
+    useCharacterState();
 
-  return (
-
-    email && userName ? (
+  return email && userName ? (
     <div>
-      <AnsController/>
-      <PopupButton />
+      {!isLoading ? (
+        <>
+          <AnsController />
+          <PopupButton />
+        </>
+      ) : null}
+
       <Scene />
       {isMobileScreen && isCharacterControllable ? (
         <Nipple
@@ -87,9 +83,9 @@ function App() {
           onEnd={(e, d) => joyStickEnd(d)}
         />
       ) : null}
-    </div>) 
-    :
-    <AuthError/>
+    </div>
+  ) : (
+    <AuthError />
   );
 }
 
