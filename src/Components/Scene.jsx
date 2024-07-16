@@ -7,7 +7,6 @@ import { KeyboardControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
 import { Html, Environment } from "@react-three/drei";
-import * as THREE from "three";
 import Question from "./Question/Question";
 import PointingCharacter from "./PointingCharacter";
 import DisplayAnswers from "./AnswerPopup/DisplayAnswers";
@@ -60,12 +59,6 @@ const Scene = () => {
           >
             <Suspense fallback={<Loader />}>
               <Physics>
-                <Environment
-                  files="/assets/street.hdr" // Replace with your actual HDRI file path
-                  background // Whether to set the environment map as the scene background
-                  encoding={THREE.sRGBEncoding} // Optional, for better color rendering
-                  intensity={0}
-                />
                 <Hall />
                 <Camera />
                 <CharacterController />
