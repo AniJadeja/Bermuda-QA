@@ -168,36 +168,70 @@ textarea {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Button CSS */
-.open-popup-button {
+
+
+
+
+
+.popup-buttons-container {
   position: fixed;
   bottom: 20px;
-  left: 48%;
+  left: 50%;
   transform: translateX(-50%);
-  z-index: 1;
-  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 101;
+}
+
+.open-popup-button,
+.open-answer-button {
+  padding: 10px;
   background-color: rgba(241, 76, 76, 0.8);
   color: white;
   border: none;
-  border-radius: 100%;
+  border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 10px 7px 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
 }
 
-.open-answer-button{
-  position: fixed;
-  bottom: 20px;
-  left: 52%;
-  transform: translateX(-50%);
-  z-index: 1;
-  padding: 10px 20px;
+.open-answer-button {
   background-color: rgba(76, 131, 241, 0.589);
-  color: white;
-  border: none;
-  border-radius: 100%;
-  cursor: pointer;
-  box-shadow: 0 10px 7px 2px rgba(0, 0, 0, 0.3);
 }
+
+.button-icon {
+  height: 15px;
+  width: auto;
+}
+
+/* Media query for mobile screens */
+@media (max-width: 768px) {
+  .popup-buttons-container {
+    gap: 10px;
+  }
+
+  .open-popup-button,
+  .open-answer-button {
+    width: 35px;
+    height: 35px;
+  }
+
+  .button-icon {
+    height: 12px;
+  }
+}
+
+
+
+
+
+
+
 
 
 
@@ -227,3 +261,4 @@ textarea {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
