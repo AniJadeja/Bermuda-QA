@@ -62,7 +62,7 @@ const Scene = () => {
                 <Hall />
                 <Camera />
                 <CharacterController />
-                <PointingCharacter />
+                <PointingCharacter animation={"Armature|Take 001|BaseLayer"} />
                 <DisplayAnswers />
                 <Question />
               </Physics>
