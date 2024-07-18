@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Vector3, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
-
 import { OrbitControls, Text, Text3D, useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
@@ -44,9 +43,11 @@ export const CharacterController = () => {
     return angle;
   };
 
-  const [count, setCount] = useState(8);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const initialMousePosition = useRef({ x: 0, y: 0 });
+  const [cameraTilt, setCameraTilt] = useState(0);
+  const [cameraDistance, setCameraDistance] = useState(8);
+  const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
 
   useEffect(() => {
     const handleMouseDown = (event) => {
@@ -57,9 +58,14 @@ export const CharacterController = () => {
     const handleMouseMove = (event) => {
       if (isMouseDown) {
         const deltaX = event.clientX - initialMousePosition.current.x;
+        const deltaY = event.clientY - initialMousePosition.current.y;
         
-        // controls the camera rotation direction
         rotationTarget.current -= degToRad(0.5) * deltaX; 
+
+        setCameraTilt(prevTilt => {
+          const newTilt = prevTilt + degToRad(0.5) * deltaY;
+          return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
+        });
 
         initialMousePosition.current = { x: event.clientX, y: event.clientY };
       }
@@ -81,23 +87,11 @@ export const CharacterController = () => {
   }, [isMouseDown]);
 
   const handleScroll = (event) => {
-    const minValue = 5;
-    const maxValue = 10;
-
-    const scrollDirection = event.deltaY > 0 ? "down" : "up";
-
-    if (
-      (scrollDirection === "down" && count > minValue) ||
-      (scrollDirection === "up" && count < maxValue)
-    ) {
-      setCount((prevCount) => {
-        if (scrollDirection === "down") {
-          return Math.max(prevCount - 1, minValue);
-        } else {
-          return Math.min(prevCount + 1, maxValue);
-        }
-      });
-    }
+    const zoomSpeed = 0.001;
+    setCameraDistance(prevDistance => {
+      const newDistance = prevDistance + event.deltaY * zoomSpeed;
+      return Math.max(2, Math.min(20, newDistance)); // Limit zoom between 2 and 20
+    });
   };
 
   useEffect(() => {
@@ -142,9 +136,14 @@ export const CharacterController = () => {
     const onTouchMove = (e) => {
       if (isClicking.current) {
         const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
+        const deltaY = e.touches[0].clientY - initialMousePosition.current.y;
         
-        // controls the rotation direction
         rotationTarget.current -= degToRad(0.1) * deltaX;
+
+        setCameraTilt(prevTilt => {
+          const newTilt = prevTilt + degToRad(0.1) * deltaY;
+          return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
+        });
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
@@ -215,7 +214,6 @@ export const CharacterController = () => {
           setAnimation("idle");
         }
 
-        // Only rotate the character if it's moving
         if (isMoving) {
           character.current.rotation.y = lerpAngle(
             character.current.rotation.y,
@@ -227,8 +225,8 @@ export const CharacterController = () => {
         rb.current.setLinvel(vel, true);
       }
 
-      cameraPosition.current.position.y = count;
-      cameraPosition.current.position.z = count / 2;
+      cameraPosition.current.position.y = cameraDistance;
+      cameraPosition.current.position.z = cameraDistance / 2;
 
       container.current.rotation.y = MathUtils.lerp(
         container.current.rotation.y,
@@ -237,13 +235,15 @@ export const CharacterController = () => {
       );
 
       cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-      camera.position.lerp(cameraWorldPosition.current, 1);
+      camera.position.copy(cameraWorldPosition.current);
 
       if (cameraTarget.current) {
         cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 1);
-
-        camera.lookAt(cameraLookAt.current);
+        
+        const tiltedLookAt = cameraLookAtWorldPosition.current.clone();
+        tiltedLookAt.y += Math.tan(cameraTilt) * cameraDistance;
+        
+        camera.lookAt(tiltedLookAt);
       }
     } else if (cameraControlMode === "orbit") {
       Orbitcontroll.current.update();
