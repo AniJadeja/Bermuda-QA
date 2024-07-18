@@ -3,7 +3,7 @@ import Hall from "./Hall";
 import Camera from "./Camera/Camera";
 import Character from "./Character/Character";
 import { CharacterController } from "./Character/CharacterControls";
-import { KeyboardControls } from "@react-three/drei";
+import { KeyboardControls, useProgress } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
 import { Html, Environment } from "@react-three/drei";
@@ -18,6 +18,7 @@ export const useLoadStatusStore = create((set) => ({
 }));
 
 const Loader = () => {
+  const { progress } = useProgress();
   const setLoading = useLoadStatusStore((state) => state.setLoading);
 
   useEffect(() => {
@@ -27,8 +28,8 @@ const Loader = () => {
 
   return (
     <Html center>
-      <div style={{ display: 'flex', justifyContent: 'center', height: 'auto', width: '100vw' , margin:'auto'}}>
-        <h1 style={{ textAlign: 'center' }}>Loading ...</h1>
+      <div style={{ display: 'flex', justifyContent: 'center', height: 'auto', width: '100vw', margin: 'auto' }}>
+        <h1 style={{ textAlign: 'center' }}>Loading {progress.toFixed(2)}%</h1>
       </div>
     </Html>
   );
