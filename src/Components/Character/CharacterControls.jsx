@@ -48,17 +48,20 @@ export const CharacterController = () => {
   const [cameraTilt, setCameraTilt] = useState(0);
   const [cameraDistance, setCameraDistance] = useState(8);
   const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
+  const CAMERA_MOVE_SPEED = 0.35; // Speed multiplier for camera movement
 
   useEffect(() => {
     const handleMouseDown = (event) => {
       setIsMouseDown(true);
       initialMousePosition.current = { x: event.clientX, y: event.clientY };
+      document.body.style.cursor = 'none'; // Hide the cursor
+      document.body.requestPointerLock(); // Lock the pointer
     };
- 
+
     const handleMouseMove = (event) => {
       if (isMouseDown) {
-        const deltaX = event.clientX - initialMousePosition.current.x;
-        const deltaY = event.clientY - initialMousePosition.current.y;
+        const deltaX = (event.movementX || event.mozMovementX || event.webkitMovementX || 0) * CAMERA_MOVE_SPEED;
+        const deltaY = (event.movementY || event.mozMovementY || event.webkitMovementY || 0) * CAMERA_MOVE_SPEED;
         
         rotationTarget.current -= degToRad(0.5) * deltaX; 
 
@@ -66,13 +69,13 @@ export const CharacterController = () => {
           const newTilt = prevTilt + degToRad(0.5) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
-
-        initialMousePosition.current = { x: event.clientX, y: event.clientY };
       }
     };
 
     const handleMouseUp = () => {
       setIsMouseDown(false);
+      document.body.style.cursor = 'default'; // Show the cursor
+      document.exitPointerLock(); // Unlock the pointer
     };
 
     document.addEventListener("mousedown", handleMouseDown);
@@ -90,7 +93,7 @@ export const CharacterController = () => {
     const zoomSpeed = 0.001;
     setCameraDistance(prevDistance => {
       const newDistance = prevDistance + event.deltaY * zoomSpeed;
-      return Math.max(2, Math.min(20, newDistance)); // Limit zoom between 2 and 20
+      return Math.max(2, Math.min(8, newDistance)); // Limit zoom between 2 and 20
     });
   };
 
@@ -135,8 +138,8 @@ export const CharacterController = () => {
 
     const onTouchMove = (e) => {
       if (isClicking.current) {
-        const deltaX = e.touches[0].clientX - initialMousePosition.current.x;
-        const deltaY = e.touches[0].clientY - initialMousePosition.current.y;
+        const deltaX = (e.touches[0].clientX - initialMousePosition.current.x) * CAMERA_MOVE_SPEED;
+        const deltaY = (e.touches[0].clientY - initialMousePosition.current.y) * CAMERA_MOVE_SPEED;
         
         rotationTarget.current -= degToRad(0.1) * deltaX;
 
