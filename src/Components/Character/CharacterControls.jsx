@@ -1,3 +1,5 @@
+// CharacterControls.jsx
+
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import Character from "./Character";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +11,7 @@ import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
 import { useCameraControlStore } from "../GlobalData/GlobalData";
-import { useCharacterState } from '../../Context/characterContext'
+import { useCharacterState } from '../../Context/characterContext';
 
 export let movementCharacter = {
   x: 0,
@@ -37,6 +39,7 @@ export const CharacterController = () => {
     decrement,
   } = useRefs();
   const { cameraControlMode, setCameraControlMode } = useCameraControlStore();
+  
   const normalizeAngle = (angle) => {
     while (angle > Math.PI) angle -= 2 * Math.PI;
     while (angle < -Math.PI) angle += 2 * Math.PI;
@@ -49,6 +52,13 @@ export const CharacterController = () => {
   const [cameraDistance, setCameraDistance] = useState(8);
   const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
   const CAMERA_MOVE_SPEED = 0.35; // Speed multiplier for camera movement
+
+  const [lockXRotation, setLockXRotation] = useState(false);
+  const [lockYRotation, setLockYRotation] = useState(false);
+  const [lockZoom, setLockZoom] = useState(false);
+
+  const VERTICAL_THRESHOLD = 10; // Adjust this value as needed
+  const SMOOTHING_FACTOR = 0.5; // Adjust for more or less smoothing
 
   useEffect(() => {
     const handleMouseDown = (event) => {
@@ -87,7 +97,7 @@ export const CharacterController = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isMouseDown]);
+  }, [isMouseDown, lockXRotation, lockYRotation]);
 
   const handleScroll = (event) => {
     const zoomSpeed = 0.001;
@@ -103,7 +113,7 @@ export const CharacterController = () => {
     return () => {
       window.removeEventListener("wheel", handleScroll);
     };
-  }, []);
+  }, [lockZoom]);
 
   const lerpAngle = (start, end, t) => {
     start = normalizeAngle(start);
@@ -143,10 +153,16 @@ export const CharacterController = () => {
         
         rotationTarget.current -= degToRad(0.1) * deltaX;
 
-        setCameraTilt(prevTilt => {
-          const newTilt = prevTilt + degToRad(0.1) * deltaY;
-          return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
-        });
+        if (!lockYRotation) {
+          rotationTarget.current -= degToRad(0.1) * deltaX;
+        }
+
+        if (!lockXRotation && Math.abs(deltaY) > VERTICAL_THRESHOLD) {
+          setCameraTilt(prevTilt => {
+            const newTilt = prevTilt + degToRad(0.1) * (deltaY - Math.sign(deltaY) * VERTICAL_THRESHOLD);
+            return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
+          });
+        }
 
         initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
@@ -171,10 +187,10 @@ export const CharacterController = () => {
       document.removeEventListener("touchmove", onTouchMove);
       document.removeEventListener("touchend", onTouchEnd);
     };
-  }, []);
+  }, [lockXRotation, lockYRotation]);
 
   useFrame(({ camera, mouse }) => {
-    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE ) {
+    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE) {
       if (rb.current) {
         const vel = rb.current.linvel();
 
@@ -231,10 +247,11 @@ export const CharacterController = () => {
       cameraPosition.current.position.y = cameraDistance;
       cameraPosition.current.position.z = cameraDistance / 2;
 
+      // Apply smoothing to rotation
       container.current.rotation.y = MathUtils.lerp(
         container.current.rotation.y,
         rotationTarget.current,
-        0.1
+        SMOOTHING_FACTOR
       );
 
       cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
@@ -242,11 +259,16 @@ export const CharacterController = () => {
 
       if (cameraTarget.current) {
         cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-        
+
         const tiltedLookAt = cameraLookAtWorldPosition.current.clone();
         tiltedLookAt.y += Math.tan(cameraTilt) * cameraDistance;
-        
+
         camera.lookAt(tiltedLookAt);
+
+        // Apply smoothing to tilt
+        const currentTilt = camera.rotation.x;
+        const targetTilt = Math.atan2(tiltedLookAt.y - camera.position.y, cameraDistance);
+        camera.rotation.x = MathUtils.lerp(currentTilt, targetTilt, SMOOTHING_FACTOR);
       }
     } else if (cameraControlMode === "orbit") {
       Orbitcontroll.current.update();
