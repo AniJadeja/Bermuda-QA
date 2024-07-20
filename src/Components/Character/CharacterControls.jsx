@@ -2,7 +2,7 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import Character from "./Character";
 import { useEffect, useRef, useState } from "react";
 import { Vector3, MathUtils } from "three";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import { OrbitControls, Text, Text3D, useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
@@ -44,6 +44,7 @@ export const CharacterController = () => {
   };
 
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isCtrlPressed, setIsCtrlPressed] = useState(false);
   const initialMousePosition = useRef({ x: 0, y: 0 });
   const [cameraTilt, setCameraTilt] = useState(0);
   const [cameraDistance, setCameraDistance] = useState(8);
@@ -51,15 +52,32 @@ export const CharacterController = () => {
   const CAMERA_MOVE_SPEED = 0.35; // Speed multiplier for camera movement
 
   useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Control') {
+        setIsCtrlPressed(true);
+      }
+    };
+
+    const handleKeyUp = (event) => {
+      if (event.key === 'Control') {
+        setIsCtrlPressed(false);
+        setIsMouseDown(false);
+        document.body.style.cursor = 'default';
+        document.exitPointerLock();
+      }
+    };
+
     const handleMouseDown = (event) => {
-      setIsMouseDown(true);
-      initialMousePosition.current = { x: event.clientX, y: event.clientY };
-      document.body.style.cursor = 'none'; // Hide the cursor
-      document.body.requestPointerLock(); // Lock the pointer
+      if (event.ctrlKey) {
+        setIsMouseDown(true);
+        initialMousePosition.current = { x: event.clientX, y: event.clientY };
+        document.body.style.cursor = 'none';
+        document.body.requestPointerLock();
+      }
     };
 
     const handleMouseMove = (event) => {
-      if (isMouseDown) {
+      if (isMouseDown && isCtrlPressed) {
         const deltaX = (event.movementX || event.mozMovementX || event.webkitMovementX || 0) * CAMERA_MOVE_SPEED;
         const deltaY = (event.movementY || event.mozMovementY || event.webkitMovementY || 0) * CAMERA_MOVE_SPEED;
         
@@ -73,21 +91,27 @@ export const CharacterController = () => {
     };
 
     const handleMouseUp = () => {
-      setIsMouseDown(false);
-      document.body.style.cursor = 'default'; // Show the cursor
-      document.exitPointerLock(); // Unlock the pointer
+      if (!isCtrlPressed) {
+        setIsMouseDown(false);
+        document.body.style.cursor = 'default';
+        document.exitPointerLock();
+      }
     };
 
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
     document.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isMouseDown]);
+  }, [isMouseDown, isCtrlPressed]);
 
   const handleScroll = (event) => {
     const zoomSpeed = 0.001;
@@ -119,59 +143,6 @@ export const CharacterController = () => {
 
     return normalizeAngle(start + (end - start) * t);
   };
-
-  const isClicking = useRef(false);
-
-  useEffect(() => {
-    const onMouseDown = () => {
-      isClicking.current = true;
-    };
-
-    const onMouseUp = () => {
-      isClicking.current = false;
-    };
-
-    const onTouchStart = (e) => {
-      isClicking.current = true;
-      initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    };
-
-    const onTouchMove = (e) => {
-      if (isClicking.current) {
-        const deltaX = (e.touches[0].clientX - initialMousePosition.current.x) * CAMERA_MOVE_SPEED;
-        const deltaY = (e.touches[0].clientY - initialMousePosition.current.y) * CAMERA_MOVE_SPEED;
-        
-        rotationTarget.current -= degToRad(0.1) * deltaX;
-
-        setCameraTilt(prevTilt => {
-          const newTilt = prevTilt + degToRad(0.1) * deltaY;
-          return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
-        });
-
-        initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      }
-    };
-
-    const onTouchEnd = () => {
-      isClicking.current = false;
-    };
-
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mouseup", onMouseUp);
-
-    document.addEventListener("touchstart", onTouchStart);
-    document.addEventListener("touchmove", onTouchMove);
-    document.addEventListener("touchend", onTouchEnd);
-
-    return () => {
-      document.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mouseup", onMouseUp);
-
-      document.removeEventListener("touchstart", onTouchStart);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
-    };
-  }, []);
 
   useFrame(({ camera, mouse }) => {
     if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE ) {
