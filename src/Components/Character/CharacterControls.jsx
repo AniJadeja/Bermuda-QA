@@ -57,6 +57,10 @@ export const CharacterController = () => {
       document.body.style.cursor = "grabbing";
     };
 
+
+    // This function is responsible for handling
+    // the movement of the camera in the desktop view
+
     const handleMouseMove = (event) => {
       if (isMouseDown) {
         const deltaX =
@@ -70,10 +74,17 @@ export const CharacterController = () => {
             event.webkitMovementY ||
             0) * CAMERA_MOVE_SPEED;
 
+
+
+        // changing from - to + will change the direction of the camera rotation
+        // camera rotation is horizontal rotation of the camera
+
         rotationTarget.current -= degToRad(0.5) * deltaX;
 
         setCameraTilt((prevTilt) => {
-          const newTilt = prevTilt + degToRad(0.5) * deltaY;
+          // changing from - to + will change the direction of the camera tilt
+          // camera tils is vertical rotation of the camera
+          const newTilt = prevTilt - degToRad(0.5) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
       }
@@ -144,6 +155,11 @@ export const CharacterController = () => {
       };
     };
 
+
+
+    // This function is responsible for handling 
+    // the movement of the camera in the mobile view
+
     const onTouchMove = (e) => {
       if (isClicking.current) {
         const deltaX =
@@ -154,7 +170,7 @@ export const CharacterController = () => {
         rotationTarget.current -= degToRad(0.1) * deltaX;
 
         setCameraTilt((prevTilt) => {
-          const newTilt = prevTilt + degToRad(0.1) * deltaY;
+          const newTilt = prevTilt - degToRad(0.1) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
 
