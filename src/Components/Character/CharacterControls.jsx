@@ -1,15 +1,9 @@
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import Character from "./Character";
 import { useEffect, useRef, useState } from "react";
-import { Vector3, MathUtils } from "three";
+import { MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useControls } from "leva";
-import {
-  OrbitControls,
-  Text,
-  Text3D,
-  useKeyboardControls,
-} from "@react-three/drei";
+import { useKeyboardControls } from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
@@ -30,7 +24,6 @@ export const CharacterController = () => {
     rb,
     container,
     cameraPosition,
-    cameraLookAt,
     cameraWorldPosition,
     cameraTarget,
     character,
@@ -38,8 +31,6 @@ export const CharacterController = () => {
     rotationTarget,
     characterRotationTarget,
     Orbitcontroll,
-    increment,
-    decrement,
   } = useRefs();
   const { cameraControlMode, setCameraControlMode } = useCameraControlStore();
   const normalizeAngle = (angle) => {
@@ -55,11 +46,15 @@ export const CharacterController = () => {
   const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
   const CAMERA_MOVE_SPEED = 0.1; // Speed multiplier for camera movement
 
+  const MIN_CAMERA_DISTANCE = 4;
+  const MAX_CAMERA_DISTANCE = 9;
+  const ZOOM_SPEED = 0.001;
+
   useEffect(() => {
     const handleMouseDown = (event) => {
       setIsMouseDown(true);
       initialMousePosition.current = { x: event.clientX, y: event.clientY };
-      document.body.style.cursor = "grabbing"; 
+      document.body.style.cursor = "grabbing";
     };
 
     const handleMouseMove = (event) => {
@@ -86,7 +81,7 @@ export const CharacterController = () => {
 
     const handleMouseUp = () => {
       setIsMouseDown(false);
-      document.body.style.cursor = "default"; 
+      document.body.style.cursor = "default";
     };
 
     document.addEventListener("mousedown", handleMouseDown);
@@ -101,10 +96,9 @@ export const CharacterController = () => {
   }, [isMouseDown]);
 
   const handleScroll = (event) => {
-    const zoomSpeed = 0.001;
     setCameraDistance((prevDistance) => {
-      const newDistance = prevDistance + event.deltaY * zoomSpeed;
-      return Math.max(2, Math.min(8, newDistance)); // Limit zoom between 2 and 20
+      const newDistance = prevDistance + event.deltaY * ZOOM_SPEED;
+      return Math.max(MIN_CAMERA_DISTANCE, Math.min(MAX_CAMERA_DISTANCE, newDistance));
     });
   };
 
@@ -153,11 +147,9 @@ export const CharacterController = () => {
     const onTouchMove = (e) => {
       if (isClicking.current) {
         const deltaX =
-          (e.touches[0].clientX - initialMousePosition.current.x) *
-          CAMERA_MOVE_SPEED;
+          (e.touches[0].clientX - initialMousePosition.current.x) * CAMERA_MOVE_SPEED;
         const deltaY =
-          (e.touches[0].clientY - initialMousePosition.current.y) *
-          CAMERA_MOVE_SPEED;
+          (e.touches[0].clientY - initialMousePosition.current.y) * CAMERA_MOVE_SPEED;
 
         rotationTarget.current -= degToRad(0.1) * deltaX;
 
@@ -263,9 +255,7 @@ export const CharacterController = () => {
       camera.position.copy(cameraWorldPosition.current);
 
       if (cameraTarget.current) {
-        cameraTarget.current.getWorldPosition(
-          cameraLookAtWorldPosition.current
-        );
+        cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
 
         const tiltedLookAt = cameraLookAtWorldPosition.current.clone();
         tiltedLookAt.y += Math.tan(cameraTilt) * cameraDistance;
@@ -276,7 +266,6 @@ export const CharacterController = () => {
       Orbitcontroll.current.update();
     }
   });
-
   return (
     <>
       <RigidBody colliders={false} lockRotations ref={rb}>
