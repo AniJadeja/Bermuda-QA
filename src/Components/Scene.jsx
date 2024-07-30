@@ -28,8 +28,19 @@ const Loader = () => {
 
   return (
     <Html center>
-      <div style={{ display: 'flex', justifyContent: 'center', height: 'auto', width: '100vw', margin: 'auto' }}>
-        <h1 style={{ textAlign: 'center' }}>Loading {progress.toFixed(2)}%</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center", // Changed from alignContent to alignItems
+          height: "100vh",
+          width: "100vw",
+          margin: "auto",
+          backgroundImage: "url('/blurredLoader.png')", // Fixed missing closing parenthesis
+          backgroundSize: "cover",
+        }}
+      >
+        <h1 style={{ textAlign: "center" }}>Loading {progress.toFixed(2)}%</h1>
       </div>
     </Html>
   );
