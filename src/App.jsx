@@ -18,11 +18,9 @@ const AuthError = () => {
 
 function App() {
   const { isLoading } = useLoadStatusStore();
-
-  const { cookies, setCookies } = useUserCookies();
-  const email = cookies.user;
-  const userName = cookies.pname;
-
+  const { getCookies, setCookies } = useUserCookies();
+  const email = getCookies().user;
+  const userName = getCookies().pname;
   const joyStickStart = useCallback((data) => {
     if (data.distance > 0) {
       // Calculate angle in radians
@@ -35,7 +33,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-
+   
 
     setCookies({
       user: "abc@newmail.com",
@@ -44,7 +42,7 @@ function App() {
 
     // TODO : handle signin logic here.
     if (!(email && userName)) {
-      // redirect user and get the info
+       window.location.href = `https://bermudaunicorn.com/signin/?${window.location}`;
     }
 
     // only set these when user has authenticated
@@ -54,7 +52,6 @@ function App() {
     //   pname: userName,
     // });
 
-   
     // The above values are set for debugging purposes only
   }, []);
 

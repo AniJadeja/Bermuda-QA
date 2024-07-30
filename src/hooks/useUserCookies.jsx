@@ -28,7 +28,7 @@ const useUserCookies = () => {
     setCookiesState(getCookies());
   }, []);
 
-  return { cookies, setCookies };
+  return { getCookies, setCookies };
 };
 
 export default useUserCookies;

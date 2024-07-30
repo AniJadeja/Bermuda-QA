@@ -14,8 +14,8 @@ export const usePopupStore = create((set) => ({
 
 const PopupButton = () => {
   const { showPopup, setShowPopup } = usePopupStore();
-  const { cookies } = useUserCookies();
-  const userName = cookies.pname;
+  const { getCookies } = useUserCookies();
+  const userName = getCookies().pname;
   const handleClose = () => {
     setShowPopup(false);
   };

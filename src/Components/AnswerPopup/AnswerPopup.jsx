@@ -29,8 +29,8 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     isCharacterControllable,
   } = useCharacterState();
 
-  const { cookies } = useUserCookies();
-  const email = cookies.user;
+  const { getCookies } = useUserCookies();
+  const email = getCookies().user;
 
 
   useEffect(() => {

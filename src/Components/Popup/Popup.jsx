@@ -17,9 +17,9 @@ const Popup = ({ name, onClose }) => {
   const popupRef = useRef(null);
 
   const { questionId } = usePopupStore();
-  const { cookies } = useUserCookies();
-  const userName = cookies.pname;
-  const email = cookies.user;
+  const { getCookies } = useUserCookies();
+  const userName = getCookies().pname;
+  const email = getCookies().user;
 
   const {
     IS_CHARACTER_MOVABLE,
