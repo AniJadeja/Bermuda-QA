@@ -4,12 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { Vector3, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
-import { OrbitControls, Text, Text3D, useKeyboardControls } from "@react-three/drei";
+import {
+  OrbitControls,
+  Text,
+  Text3D,
+  useKeyboardControls,
+} from "@react-three/drei";
 import { useRefs } from "../../Ref/ref";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Orbit from "../Orbit/Orbit";
 import { useCameraControlStore } from "../GlobalData/GlobalData";
-import { useCharacterState } from '../../Context/characterContext'
+import { useCharacterState } from "../../Context/characterContext";
 
 export let movementCharacter = {
   x: 0,
@@ -48,24 +53,31 @@ export const CharacterController = () => {
   const [cameraTilt, setCameraTilt] = useState(0);
   const [cameraDistance, setCameraDistance] = useState(8);
   const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
-  const CAMERA_MOVE_SPEED = 0.35; // Speed multiplier for camera movement
+  const CAMERA_MOVE_SPEED = 0.1; // Speed multiplier for camera movement
 
   useEffect(() => {
     const handleMouseDown = (event) => {
       setIsMouseDown(true);
       initialMousePosition.current = { x: event.clientX, y: event.clientY };
-      document.body.style.cursor = 'none'; // Hide the cursor
-      document.body.requestPointerLock(); // Lock the pointer
+      document.body.style.cursor = "grabbing"; 
     };
 
     const handleMouseMove = (event) => {
       if (isMouseDown) {
-        const deltaX = (event.movementX || event.mozMovementX || event.webkitMovementX || 0) * CAMERA_MOVE_SPEED;
-        const deltaY = (event.movementY || event.mozMovementY || event.webkitMovementY || 0) * CAMERA_MOVE_SPEED;
-        
-        rotationTarget.current -= degToRad(0.5) * deltaX; 
+        const deltaX =
+          (event.movementX ||
+            event.mozMovementX ||
+            event.webkitMovementX ||
+            0) * CAMERA_MOVE_SPEED;
+        const deltaY =
+          (event.movementY ||
+            event.mozMovementY ||
+            event.webkitMovementY ||
+            0) * CAMERA_MOVE_SPEED;
 
-        setCameraTilt(prevTilt => {
+        rotationTarget.current -= degToRad(0.5) * deltaX;
+
+        setCameraTilt((prevTilt) => {
           const newTilt = prevTilt + degToRad(0.5) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
@@ -74,8 +86,7 @@ export const CharacterController = () => {
 
     const handleMouseUp = () => {
       setIsMouseDown(false);
-      document.body.style.cursor = 'default'; // Show the cursor
-      document.exitPointerLock(); // Unlock the pointer
+      document.body.style.cursor = "default"; 
     };
 
     document.addEventListener("mousedown", handleMouseDown);
@@ -91,7 +102,7 @@ export const CharacterController = () => {
 
   const handleScroll = (event) => {
     const zoomSpeed = 0.001;
-    setCameraDistance(prevDistance => {
+    setCameraDistance((prevDistance) => {
       const newDistance = prevDistance + event.deltaY * zoomSpeed;
       return Math.max(2, Math.min(8, newDistance)); // Limit zoom between 2 and 20
     });
@@ -133,22 +144,32 @@ export const CharacterController = () => {
 
     const onTouchStart = (e) => {
       isClicking.current = true;
-      initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      initialMousePosition.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      };
     };
 
     const onTouchMove = (e) => {
       if (isClicking.current) {
-        const deltaX = (e.touches[0].clientX - initialMousePosition.current.x) * CAMERA_MOVE_SPEED;
-        const deltaY = (e.touches[0].clientY - initialMousePosition.current.y) * CAMERA_MOVE_SPEED;
-        
+        const deltaX =
+          (e.touches[0].clientX - initialMousePosition.current.x) *
+          CAMERA_MOVE_SPEED;
+        const deltaY =
+          (e.touches[0].clientY - initialMousePosition.current.y) *
+          CAMERA_MOVE_SPEED;
+
         rotationTarget.current -= degToRad(0.1) * deltaX;
 
-        setCameraTilt(prevTilt => {
+        setCameraTilt((prevTilt) => {
           const newTilt = prevTilt + degToRad(0.1) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
 
-        initialMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        initialMousePosition.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
       }
     };
 
@@ -174,7 +195,7 @@ export const CharacterController = () => {
   }, []);
 
   useFrame(({ camera, mouse }) => {
-    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE ) {
+    if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE) {
       if (rb.current) {
         const vel = rb.current.linvel();
 
@@ -209,7 +230,8 @@ export const CharacterController = () => {
 
         if (movement.x !== 0 || movement.z !== 0) {
           isMoving = true;
-          characterRotationTarget.current = container.current.rotation.y + Math.atan2(movement.x, movement.z);
+          characterRotationTarget.current =
+            container.current.rotation.y + Math.atan2(movement.x, movement.z);
           vel.x = -Math.sin(characterRotationTarget.current) * speed;
           vel.z = -Math.cos(characterRotationTarget.current) * speed;
           setAnimation("Walking");
@@ -241,11 +263,13 @@ export const CharacterController = () => {
       camera.position.copy(cameraWorldPosition.current);
 
       if (cameraTarget.current) {
-        cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-        
+        cameraTarget.current.getWorldPosition(
+          cameraLookAtWorldPosition.current
+        );
+
         const tiltedLookAt = cameraLookAtWorldPosition.current.clone();
         tiltedLookAt.y += Math.tan(cameraTilt) * cameraDistance;
-        
+
         camera.lookAt(tiltedLookAt);
       }
     } else if (cameraControlMode === "orbit") {
