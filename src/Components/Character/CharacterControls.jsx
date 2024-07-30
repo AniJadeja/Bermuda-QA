@@ -44,11 +44,27 @@ export const CharacterController = () => {
   const [cameraTilt, setCameraTilt] = useState(0);
   const [cameraDistance, setCameraDistance] = useState(8);
   const MAX_TILT_ANGLE = Math.PI / 3; // 60 degrees
-  const CAMERA_MOVE_SPEED = 0.1; // Speed multiplier for camera movement
+  const DESKTOP_CAMERA_MOVE_SPEED = 0.1;
+  const MOBILE_CAMERA_MOVE_SPEED = 2;
 
   const MIN_CAMERA_DISTANCE = 4;
   const MAX_CAMERA_DISTANCE = 9;
   const ZOOM_SPEED = 0.001;
+  const MOBILE_ZOOM_SPEED = 0.01;
+
+  const initialPinchDistance = useRef(null);
+
+  const isInJoystickArea = (x, y) => {
+    const joystickRadius = 50; // Half of the joystick width/height
+    const joystickCenterX = 50 + joystickRadius; // Left position + radius
+    const joystickCenterY = window.innerHeight - (50 + joystickRadius); // Bottom position + radius
+
+    const distanceFromCenter = Math.sqrt(
+      Math.pow(x - joystickCenterX, 2) + Math.pow(y - joystickCenterY, 2)
+    );
+
+    return distanceFromCenter <= joystickRadius;
+  };
 
   useEffect(() => {
     const handleMouseDown = (event) => {
@@ -57,33 +73,22 @@ export const CharacterController = () => {
       document.body.style.cursor = "grabbing";
     };
 
-
-    // This function is responsible for handling
-    // the movement of the camera in the desktop view
-
     const handleMouseMove = (event) => {
       if (isMouseDown) {
         const deltaX =
           (event.movementX ||
             event.mozMovementX ||
             event.webkitMovementX ||
-            0) * CAMERA_MOVE_SPEED;
+            0) * DESKTOP_CAMERA_MOVE_SPEED;
         const deltaY =
           (event.movementY ||
             event.mozMovementY ||
             event.webkitMovementY ||
-            0) * CAMERA_MOVE_SPEED;
-
-
-
-        // changing from - to + will change the direction of the camera rotation
-        // camera rotation is horizontal rotation of the camera
+            0) * DESKTOP_CAMERA_MOVE_SPEED;
 
         rotationTarget.current -= degToRad(0.5) * deltaX;
 
         setCameraTilt((prevTilt) => {
-          // changing from - to + will change the direction of the camera tilt
-          // camera tils is vertical rotation of the camera
           const newTilt = prevTilt - degToRad(0.5) * deltaY;
           return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
         });
@@ -95,31 +100,96 @@ export const CharacterController = () => {
       document.body.style.cursor = "default";
     };
 
+    const handleScroll = (event) => {
+      setCameraDistance((prevDistance) => {
+        const newDistance = prevDistance + event.deltaY * ZOOM_SPEED;
+        return Math.max(MIN_CAMERA_DISTANCE, Math.min(MAX_CAMERA_DISTANCE, newDistance));
+      });
+    };
+
+    const handleTouchZoom = (event) => {
+      if (event.touches.length === 2) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+        const distance = Math.hypot(
+          touch1.clientX - touch2.clientX,
+          touch1.clientY - touch2.clientY
+        );
+
+        if (initialPinchDistance.current === null) {
+          initialPinchDistance.current = distance;
+        } else {
+          const pinchDelta = distance - initialPinchDistance.current;
+          setCameraDistance((prevDistance) => {
+            const newDistance = prevDistance - pinchDelta * MOBILE_ZOOM_SPEED;
+            return Math.max(MIN_CAMERA_DISTANCE, Math.min(MAX_CAMERA_DISTANCE, newDistance));
+          });
+          initialPinchDistance.current = distance;
+        }
+      }
+    };
+
+    const onTouchStart = (e) => {
+      const touch = e.touches[0];
+      if (!isInJoystickArea(touch.clientX, touch.clientY)) {
+        isClicking.current = true;
+        initialMousePosition.current = {
+          x: touch.clientX,
+          y: touch.clientY,
+        };
+      }
+      initialPinchDistance.current = null;
+    };
+
+    const onTouchMove = (e) => {
+      if (e.touches.length === 2) {
+        handleTouchZoom(e);
+      } else if (isClicking.current && e.touches.length === 1) {
+        const touch = e.touches[0];
+        if (!isInJoystickArea(touch.clientX, touch.clientY)) {
+          const deltaX =
+            (touch.clientX - initialMousePosition.current.x) * MOBILE_CAMERA_MOVE_SPEED;
+          const deltaY =
+            (touch.clientY - initialMousePosition.current.y) * MOBILE_CAMERA_MOVE_SPEED;
+
+          rotationTarget.current -= degToRad(0.1) * deltaX;
+
+          setCameraTilt((prevTilt) => {
+            const newTilt = prevTilt - degToRad(0.1) * deltaY;
+            return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
+          });
+
+          initialMousePosition.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+          };
+        }
+      }
+    };
+
+    const onTouchEnd = () => {
+      isClicking.current = false;
+      initialPinchDistance.current = null;
+    };
+
     document.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("wheel", handleScroll);
+    document.addEventListener("touchstart", onTouchStart);
+    document.addEventListener("touchmove", onTouchMove);
+    document.addEventListener("touchend", onTouchEnd);
 
     return () => {
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("wheel", handleScroll);
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onTouchEnd);
     };
   }, [isMouseDown]);
-
-  const handleScroll = (event) => {
-    setCameraDistance((prevDistance) => {
-      const newDistance = prevDistance + event.deltaY * ZOOM_SPEED;
-      return Math.max(MIN_CAMERA_DISTANCE, Math.min(MAX_CAMERA_DISTANCE, newDistance));
-    });
-  };
-
-  useEffect(() => {
-    window.addEventListener("wheel", handleScroll);
-
-    return () => {
-      window.removeEventListener("wheel", handleScroll);
-    };
-  }, []);
 
   const lerpAngle = (start, end, t) => {
     start = normalizeAngle(start);
@@ -137,70 +207,6 @@ export const CharacterController = () => {
   };
 
   const isClicking = useRef(false);
-
-  useEffect(() => {
-    const onMouseDown = () => {
-      isClicking.current = true;
-    };
-
-    const onMouseUp = () => {
-      isClicking.current = false;
-    };
-
-    const onTouchStart = (e) => {
-      isClicking.current = true;
-      initialMousePosition.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      };
-    };
-
-
-
-    // This function is responsible for handling 
-    // the movement of the camera in the mobile view
-
-    const onTouchMove = (e) => {
-      if (isClicking.current) {
-        const deltaX =
-          (e.touches[0].clientX - initialMousePosition.current.x) * CAMERA_MOVE_SPEED;
-        const deltaY =
-          (e.touches[0].clientY - initialMousePosition.current.y) * CAMERA_MOVE_SPEED;
-
-        rotationTarget.current -= degToRad(0.1) * deltaX;
-
-        setCameraTilt((prevTilt) => {
-          const newTilt = prevTilt - degToRad(0.1) * deltaY;
-          return Math.max(-MAX_TILT_ANGLE, Math.min(MAX_TILT_ANGLE, newTilt));
-        });
-
-        initialMousePosition.current = {
-          x: e.touches[0].clientX,
-          y: e.touches[0].clientY,
-        };
-      }
-    };
-
-    const onTouchEnd = () => {
-      isClicking.current = false;
-    };
-
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mouseup", onMouseUp);
-
-    document.addEventListener("touchstart", onTouchStart);
-    document.addEventListener("touchmove", onTouchMove);
-    document.addEventListener("touchend", onTouchEnd);
-
-    return () => {
-      document.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mouseup", onMouseUp);
-
-      document.removeEventListener("touchstart", onTouchStart);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
-    };
-  }, []);
 
   useFrame(({ camera, mouse }) => {
     if (cameraControlMode === "character" && IS_CHARACTER_MOVABLE) {
@@ -282,6 +288,7 @@ export const CharacterController = () => {
       Orbitcontroll.current.update();
     }
   });
+
   return (
     <>
       <RigidBody colliders={false} lockRotations ref={rb}>

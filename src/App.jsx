@@ -42,7 +42,7 @@ function App() {
 
     // TODO : handle signin logic here.
     if (!(email && userName)) {
-       window.location.href = `https://bermudaunicorn.com/signin/?${window.location}`;
+     //  window.location.href = `https://bermudaunicorn.com/signin/?${window.location}`;
     }
 
     // only set these when user has authenticated
