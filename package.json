@@ -16,6 +16,7 @@
     "@react-three/rapier": "^1.4.0",
     "axios": "^1.7.2",
     "firebase": "^10.12.3",
+    "js-cookie": "^3.0.5",
     "leva": "^0.9.35",
     "loaders.css": "^0.1.2",
     "lodash": "^4.17.21",

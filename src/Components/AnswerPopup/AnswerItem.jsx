@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMyVote } from "../../Features/GetMyVote/myVoteController";
-import { useAuthStore } from "../../Features/Authentication/AuthStore";
+import useUserCookies from "../../hooks/useUserCookies";
 
 
 const AnswerItem = ({
@@ -15,7 +15,8 @@ const AnswerItem = ({
 }) => {
   const [isUpVoted, setIsUpVoted] = useState();
   const [isDownVoted, setIsDownVoted] = useState();
-  const {email} = useAuthStore();
+  const { cookies } = useUserCookies();
+  const email = cookies.user;
   useEffect(() => {
     (async () => {
       const myVote = await getMyVote(email, id);

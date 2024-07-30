@@ -3,7 +3,7 @@ import Popup from "./Popup";
 import qa from "/assets/Popup/qmark.svg";
 import correct from "/assets/Popup/correct.svg";
 import { create } from "zustand";
-import { useAuthStore } from "../../Features/Authentication/AuthStore";
+import useUserCookies from "../../hooks/useUserCookies";
 
 export const usePopupStore = create((set) => ({
   showPopup: false,
@@ -14,7 +14,8 @@ export const usePopupStore = create((set) => ({
 
 const PopupButton = () => {
   const { showPopup, setShowPopup } = usePopupStore();
-  const { userName } = useAuthStore(); 
+  const { cookies } = useUserCookies();
+  const userName = cookies.pname;
   const handleClose = () => {
     setShowPopup(false);
   };

@@ -9,16 +9,20 @@ import { useMobileScreen } from "./Context/ScreenContext.jsx";
 import { useCallback, useEffect } from "react";
 import { useCharacterState } from "./Context/characterContext.jsx";
 import AnsController from "./Components/AnswerPopup/AnsController.jsx";
-import { useAuthStore } from "./Features/Authentication/AuthStore.js";
 import { useLoadStatusStore } from "./Components/Scene";
+import useUserCookies from "./hooks/useUserCookies";
 
 const AuthError = () => {
   return <h4>User sign in needed..</h4>;
 };
 
 function App() {
-  const { setuserName, setEmail, userName, email } = useAuthStore();
   const { isLoading } = useLoadStatusStore();
+
+  const { cookies, setCookies } = useUserCookies();
+  const email = cookies.user;
+  const userName = cookies.pname;
+
   const joyStickStart = useCallback((data) => {
     if (data.distance > 0) {
       // Calculate angle in radians
@@ -31,14 +35,26 @@ function App() {
   }, []);
 
   useEffect(() => {
+
+
+    setCookies({
+      user: "abc@newmail.com",
+      pname:"abc"
+    })
+
     // TODO : handle signin logic here.
     if (!(email && userName)) {
       // redirect user and get the info
     }
 
     // only set these when user has authenticated
-    setEmail("santosh93@mail.ru");
-    setuserName("santosh");
+
+    // setCookies({
+    //   user: email,
+    //   pname: userName,
+    // });
+
+   
     // The above values are set for debugging purposes only
   }, []);
 

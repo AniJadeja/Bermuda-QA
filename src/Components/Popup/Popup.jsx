@@ -6,7 +6,7 @@ import { useCharacterState } from "../../Context/characterContext";
 import { addQuestionService } from "../../Services";
 import { addAnswerService } from "../../Services/addAnswer";
 import { usePopupStore } from "./PopupButton";
-import { useAuthStore } from "../../Features/Authentication/AuthStore";
+import useUserCookies from "../../hooks/useUserCookies";
 
 const Popup = ({ name, onClose }) => {
   const [selectedOption, setSelectedOption] = useState("ask");
@@ -17,7 +17,9 @@ const Popup = ({ name, onClose }) => {
   const popupRef = useRef(null);
 
   const { questionId } = usePopupStore();
-  const { email, userName } = useAuthStore();
+  const { cookies } = useUserCookies();
+  const userName = cookies.pname;
+  const email = cookies.user;
 
   const {
     IS_CHARACTER_MOVABLE,

@@ -8,7 +8,7 @@ import { useDisplayControl } from "./AnsController";
 import { useCharacterState } from "../../Context/characterContext";
 import { addUpVote } from "../../Features/AddUpvotes/upvoteController";
 import { removeVote } from "../../Features/RemoveVote/removeVoteController";
-import { useAuthStore } from "../../Features/Authentication/AuthStore";
+import useUserCookies from "../../hooks/useUserCookies";
 
 export const useAnswerStore = create((set) => ({
   answers: [],
@@ -29,8 +29,10 @@ const AnswerPopup = ({ onClose, onPostAnswer }) => {
     isCharacterControllable,
   } = useCharacterState();
 
-  const { email, userName } = useAuthStore();
-  
+  const { cookies } = useUserCookies();
+  const email = cookies.user;
+
+
   useEffect(() => {
     try {
       if (isCharacterControllable) {
