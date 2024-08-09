@@ -10,17 +10,13 @@ import { useCallback, useEffect } from "react";
 import { useCharacterState } from "./Context/characterContext.jsx";
 import AnsController from "./Components/AnswerPopup/AnsController.jsx";
 import { useLoadStatusStore } from "./Components/Scene";
-import useUserCookies from "./hooks/useUserCookies";
-
-const AuthError = () => {
-  return <h4>User sign in needed..</h4>;
-};
+import AuthButton from "./Components/GoogleButton";
+import useAuthStore from "./Components/GoogleButton/index.jsx";
 
 function App() {
   const { isLoading } = useLoadStatusStore();
-  const { getCookies, setCookies } = useUserCookies();
-  const email = getCookies().user;
-  const userName = getCookies().pname;
+  const { setLoggedIn } = useAuthStore();
+
   const joyStickStart = useCallback((data) => {
     if (data.distance > 0) {
       // Calculate angle in radians
@@ -30,29 +26,6 @@ function App() {
       movementCharacter.x = -Math.cos(angleRad);
       movementCharacter.z = Math.sin(angleRad);
     }
-  }, []);
-
-  useEffect(() => {
-   
-
-    setCookies({
-      user: "abc@newmail.com",
-      pname:"abc"
-    })
-
-    // TODO : handle signin logic here.
-    if (!(email && userName)) {
-     //  window.location.href = `https://bermudaunicorn.com/signin/?${window.location}`;
-    }
-
-    // only set these when user has authenticated
-
-    // setCookies({
-    //   user: email,
-    //   pname: userName,
-    // });
-
-    // The above values are set for debugging purposes only
   }, []);
 
   const joyStickEnd = (d) => {
@@ -65,12 +38,13 @@ function App() {
   const { isCharacterControllable, setCharacterControllable } =
     useCharacterState();
 
-  return email && userName ? (
+  return (
     <div>
       {!isLoading ? (
         <>
           <AnsController />
           <PopupButton />
+          <AuthButton />
         </>
       ) : null}
 
@@ -97,9 +71,11 @@ function App() {
         />
       ) : null}
     </div>
-  ) : (
-    <AuthError />
   );
+
+  // : (
+  //   <AuthError />
+  // );
 }
 
 export default App;
