@@ -10,13 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "@react-spring/three": "^9.7.3",
     "@react-three/drei": "9.75.0",
     "@react-three/fiber": "8.13.3",
     "@react-three/rapier": "^1.4.0",
     "axios": "^1.7.2",
     "firebase": "^10.12.3",
+    "gsap": "^3.12.5",
     "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "leva": "^0.9.35",
     "loaders.css": "^0.1.2",
     "lodash": "^4.17.21",
