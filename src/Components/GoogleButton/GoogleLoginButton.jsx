@@ -2,12 +2,12 @@ import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import useUserCookies from "../../hooks/useUserCookies";
-import useAuthStore from "./index";
-
+import { useAuthStore } from "./index"; // Ensure this path is correct
 
 const GoogleLoginButton = () => {
   const { setCookies } = useUserCookies();
-  const { setLoggedIn } = useAuthStore();
+  const { setLoggedIn } = useAuthStore(); // Ensure setLoggedIn is correctly retrieved
+
   return (
     <div
       style={{
@@ -23,8 +23,6 @@ const GoogleLoginButton = () => {
       }}
     >
       <GoogleLogin
-        useOneTap={true}
-        auto_select
         shape="circle"
         onSuccess={(credentialResponse) => {
           const decoded = jwtDecode(credentialResponse.credential);
@@ -33,7 +31,9 @@ const GoogleLoginButton = () => {
             user: decoded.email,
             pname: decoded.name,
           });
+
           setLoggedIn(true);
+          window.location.href = window.location.origin;
         }}
         onError={() => {
           console.log("Login Failed");

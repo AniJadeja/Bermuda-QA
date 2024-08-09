@@ -1,7 +1,7 @@
 import React from "react";
 import { googleLogout } from "@react-oauth/google";
 import useUserCookies from "../../hooks/useUserCookies";
-import useAuthStore from "./index";
+import { useAuthStore } from "./index";
 
 const GoogleLogoutButton = () => {
   const { setCookies } = useUserCookies();
@@ -37,6 +37,7 @@ const GoogleLogoutButton = () => {
           });
           setLoggedIn(false);
           googleLogout();
+          window.location.href = window.location.origin;
         }}
       >
         Logout
